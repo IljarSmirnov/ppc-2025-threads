@@ -100,7 +100,7 @@ bool smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::RunImpl() {
     tbb::mutex::scoped_lock lock(mtxA);
     A.push_back(std::move(tmp));
   });
-  
+
   bool flag = static_cast<int>(A.size()) != 1;
   while (flag) {
     int pairs = (A.size() + 1) / 2;
