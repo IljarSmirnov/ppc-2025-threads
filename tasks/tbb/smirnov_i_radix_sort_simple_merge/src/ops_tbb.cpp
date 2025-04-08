@@ -89,7 +89,6 @@ bool smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::RunImpl() {
   tbb::mutex mutx;
   tbb::mutex mtxA;
   tbb::mutex mtx_start;
-  int start = 0;
 
   tbb::parallel_for(0, nth, [this, size, nth, &A, &mtxA](int i) {
     int self_offset = size / nth + (i < size % nth ? 1 : 0);
