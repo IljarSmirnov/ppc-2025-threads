@@ -105,7 +105,7 @@ bool smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::RunImpl() {
   while (flag) {
     int pairs = (A.size() + 1) / 2;
     for (int i = 0; i < pairs; i++) {
-      tg.run([&A, &mtx, &B]() {
+      tg.run([&A, &mtx, &B, &mutx]() {
         std::vector<int> mas1{};
         std::vector<int> mas2{};
         std::vector<int> merge_mas{};
