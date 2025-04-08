@@ -87,12 +87,11 @@ bool smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::RunImpl() {
   const int nth = std::min(size, tbb::this_task_arena::max_concurrency());
   tbb::mutex mtx;
   tbb::mutex mtxA;
-  tbb::mutex mtx_mas;
   tbb::mutex mtx_start;
   int start = 0;
 
   for (int i = 0; i < nth; i++) {
-    tg.run([this, i, size, nth, &start, &mtxA, &mtx_mas, &A, &mtx_start]() {
+    tg.run([this, i, size, nth, &start, &mtxA, &A, &mtx_start]() {
       int self_offset;
       std::vector<int> tmp;
       if (size % nth == 0) {
@@ -105,9 +104,7 @@ bool smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::RunImpl() {
       start += self_offset;
       mtx_start.unlock();
       tmp.resize(self_offset);
-      mtx_mas.lock();
       std::copy(mas_.begin() + self_start, mas_.begin() + self_start + self_offset, tmp.begin());
-      mtx_mas.unlock();
       if (!tmp.empty()) {
         RadixSort(tmp);
         mtxA.lock();
@@ -118,23 +115,24 @@ bool smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::RunImpl() {
   }
   tg.wait();
   bool flag = static_cast<int>(A.size()) != 1;
+  int pairs = (A.size() + 1) / 2;
   while (flag) {
-    for (int i = 0; i < nth; i++) {
+    for (int i = 0; i < pairs; i++) {
       tg.run([&A, &mtx, &B]() {
         std::vector<int> mas1{};
         std::vector<int> mas2{};
         std::vector<int> merge_mas{};
-        mtx.lock();
-        if (static_cast<int>(A.size()) >= 2) {
-          mas1 = std::move(A.front());
-          A.pop_front();
-          mas2 = std::move(A.front());
-          A.pop_front();
-        } else {
-          mtx.unlock();
-          return;
+        {
+          tbb::mutex::scoped_lock lock(mutx);
+          if (static_cast<int>(A.size()) >= 2) {
+            mas1 = std::move(A.front());
+            A.pop_front();
+            mas2 = std::move(A.front());
+            A.pop_front();
+          } else {
+            return;
+          }
         }
-        mtx.unlock();
         if (!mas1.empty() && !mas2.empty()) {
           merge_mas = Merge(mas1, mas2);
         }
