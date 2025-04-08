@@ -86,37 +86,24 @@ bool smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::RunImpl() {
   int size = static_cast<int>(mas_.size());
   const int nth = std::min(size, tbb::this_task_arena::max_concurrency());
   tbb::mutex mtx;
+  tbb::mutex mutx;
   tbb::mutex mtxA;
   tbb::mutex mtx_start;
   int start = 0;
 
-  for (int i = 0; i < nth; i++) {
-    tg.run([this, i, size, nth, &start, &mtxA, &A, &mtx_start]() {
-      int self_offset;
-      std::vector<int> tmp;
-      if (size % nth == 0) {
-        self_offset = size / nth;
-      } else {
-        self_offset = size / nth + static_cast<int>(i < size % nth);
-      }
-      mtx_start.lock();
-      int self_start = start;
-      start += self_offset;
-      mtx_start.unlock();
-      tmp.resize(self_offset);
-      std::copy(mas_.begin() + self_start, mas_.begin() + self_start + self_offset, tmp.begin());
-      if (!tmp.empty()) {
-        RadixSort(tmp);
-        mtxA.lock();
-        A.push_back(std::move(tmp));
-        mtxA.unlock();
-      }
-    });
-  }
-  tg.wait();
+  tbb::parallel_for(0, nth, [this, size, nth, &A, &mtxA](int i) {
+    int self_offset = size / nth + (i < size % nth ? 1 : 0);
+    int self_start = i * (size / nth) + std::min(i, size % nth);
+    std::vector<int> tmp(self_offset);
+    std::copy(mas_.begin() + self_start, mas_.begin() + self_start + self_offset, tmp.begin());
+    RadixSort(tmp);
+    tbb::mutex::scoped_lock lock(mtxA);
+    A.push_back(std::move(tmp));
+  });
+  
   bool flag = static_cast<int>(A.size()) != 1;
-  int pairs = (A.size() + 1) / 2;
   while (flag) {
+    int pairs = (A.size() + 1) / 2;
     for (int i = 0; i < pairs; i++) {
       tg.run([&A, &mtx, &B]() {
         std::vector<int> mas1{};
