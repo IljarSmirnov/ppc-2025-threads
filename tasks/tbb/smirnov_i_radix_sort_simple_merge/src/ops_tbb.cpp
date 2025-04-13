@@ -4,18 +4,18 @@
 
 #include <algorithm>
 #include <cmath>
-#include <core/util/include/util.hpp>
 #include <cstddef>
 #include <deque>
 #include <numeric>
 #include <utility>
 #include <vector>
 
+#include "oneapi/tbb/mutex.h"
 #include "oneapi/tbb/task_arena.h"
 #include "oneapi/tbb/task_group.h"
 
-std::vector<int> smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::Merge(std::vector<int> mas1,
-                                                                           std::vector<int> mas2) {
+std::vector<int> smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::Merge(std::vector<int>& mas1,
+                                                                           std::vector<int>& mas2) {
   std::vector<int> res;
   res.reserve(mas1.size() + mas2.size());
   int p1 = 0;
@@ -66,6 +66,36 @@ void smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::RadixSort(std::vector<i
     std::swap(mas, sorting);
   }
 }
+void smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::SortChunk(int i, int size, int nth, int& start,
+                                                                   tbb::mutex& mtx_start, tbb::mutex& mtx_mas,
+                                                                   tbb::mutex& mtx_firstdq,
+                                                                   std::deque<std::vector<int>>& firstdq) {
+  if (size <= 0 || mas_.empty()) {
+    return;
+  }
+  int self_offset = size / nth;
+  if (size % nth != 0) {
+    self_offset += static_cast<int>(i < size % nth);
+  }
+  std::vector<int> tmp(self_offset);
+  mtx_start.lock();
+  int self_start = start;
+  start += self_offset;
+  mtx_start.unlock();
+  if (self_start < 0 || self_start >= static_cast<int>(mas_.size()) || self_offset < 0 ||
+      self_start + self_offset > static_cast<int>(mas_.size())) {
+    return;
+  }
+  mtx_mas.lock();
+  std::copy(mas_.begin() + self_start, mas_.begin() + self_start + self_offset, tmp.begin());
+  mtx_mas.unlock();
+  if (!tmp.empty()) {
+    RadixSort(tmp);
+    mtx_firstdq.lock();
+    firstdq.push_back(std::move(tmp));
+    mtx_firstdq.unlock();
+  }
+}
 bool smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::PreProcessingImpl() {
   unsigned int input_size = task_data->inputs_count[0];
   auto* in_ptr = reinterpret_cast<int*>(task_data->inputs[0]);
@@ -78,66 +108,61 @@ bool smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::PreProcessingImpl() {
 bool smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::ValidationImpl() {
   return task_data->inputs_count[0] == task_data->outputs_count[0];
 }
-
 bool smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::RunImpl() {
-  std::deque<std::vector<int>> A;
-  std::deque<std::vector<int>> B;
+  std::deque<std::vector<int>> firstdq;
+  std::deque<std::vector<int>> seconddq;
   tbb::task_group tg;
   int size = static_cast<int>(mas_.size());
   const int nth = std::min(size, tbb::this_task_arena::max_concurrency());
   tbb::mutex mtx;
-  tbb::mutex mutx;
-  tbb::mutex mtxA;
+  tbb::mutex mtx_firstdq;
+  tbb::mutex mtx_mas;
   tbb::mutex mtx_start;
+  int start = 0;
 
-  tbb::parallel_for(0, nth, [this, size, nth, &A, &mtxA](int i) {
-    int self_offset = size / nth + (i < size % nth ? 1 : 0);
-    int self_start = i * (size / nth) + std::min(i, size % nth);
-    std::vector<int> tmp(self_offset);
-    std::copy(mas_.begin() + self_start, mas_.begin() + self_start + self_offset, tmp.begin());
-    RadixSort(tmp);
-    tbb::mutex::scoped_lock lock(mtxA);
-    A.push_back(std::move(tmp));
-  });
-
-  bool flag = static_cast<int>(A.size()) != 1;
+  for (int i = 0; i < nth; i++) {
+    tg.run([this, i, size, nth, &start, &mtx_firstdq, &mtx_mas, &firstdq, &mtx_start]() {
+      SortChunk(i, size, nth, start, mtx_start, mtx_mas, mtx_firstdq, firstdq);
+    });
+  }
+  tg.wait();
+  bool flag = static_cast<int>(firstdq.size()) != 1;
   while (flag) {
-    int pairs = (A.size() + 1) / 2;
-    for (int i = 0; i < pairs; i++) {
-      tg.run([&A, &mtx, &B, &mutx]() {
+    for (int i = 0; i < nth; i++) {
+      tg.run([&firstdq, &mtx, &seconddq]() {
         std::vector<int> mas1{};
         std::vector<int> mas2{};
         std::vector<int> merge_mas{};
-        {
-          tbb::mutex::scoped_lock lock(mutx);
-          if (static_cast<int>(A.size()) >= 2) {
-            mas1 = std::move(A.front());
-            A.pop_front();
-            mas2 = std::move(A.front());
-            A.pop_front();
-          } else {
-            return;
-          }
+        mtx.lock();
+        if (static_cast<int>(firstdq.size()) >= 2) {
+          mas1 = std::move(firstdq.front());
+          firstdq.pop_front();
+          mas2 = std::move(firstdq.front());
+          firstdq.pop_front();
+        } else {
+          mtx.unlock();
+          return;
         }
+        mtx.unlock();
         if (!mas1.empty() && !mas2.empty()) {
           merge_mas = Merge(mas1, mas2);
         }
         if (!merge_mas.empty()) {
           mtx.lock();
-          B.push_back(std::move(merge_mas));
+          seconddq.push_back(std::move(merge_mas));
           mtx.unlock();
         }
       });
     }
     tg.wait();
-    if (static_cast<int>(A.size()) == 1) {
-      B.push_back(std::move(A.front()));
-      A.pop_front();
+    if (static_cast<int>(firstdq.size()) == 1) {
+      seconddq.push_back(std::move(firstdq.front()));
+      firstdq.pop_front();
     }
-    std::swap(A, B);
-    flag = static_cast<int>(A.size()) != 1;
+    std::swap(firstdq, seconddq);
+    flag = static_cast<int>(firstdq.size()) != 1;
   }
-  output_ = std::move(A.front());
+  output_ = std::move(firstdq.front());
   return true;
 }
 bool smirnov_i_radix_sort_simple_merge_tbb::TestTaskTBB::PostProcessingImpl() {
