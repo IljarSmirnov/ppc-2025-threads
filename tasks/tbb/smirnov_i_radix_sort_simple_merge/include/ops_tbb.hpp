@@ -23,7 +23,7 @@ class TestTaskTBB : public ppc::core::Task {
  private:
   std::vector<int> mas_, output_;
   static void RadixSort(std::vector<int>& mas);
-  static std::vector<int> Merge(std::vector<int> mas1, std::vector<int> mas2);
+  static std::vector<int> Merge(std::vector<int>& mas1, std::vector<int>& mas2);
   void SortChunk(int i, int size, int nth, int& start, tbb::mutex& mtx_start, tbb::mutex& mtx_mas,
                  tbb::mutex& mtx_firstdq, std::deque<std::vector<int>>& firstdq);
 };
