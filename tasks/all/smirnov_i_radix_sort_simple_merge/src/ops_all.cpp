@@ -122,10 +122,6 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   int rank;
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  if (rank == 0) {
-    printf("HERE1 %d\n", mas_[0]);
-    fflush(stdout);
-  }
   std::vector<int> sendcounts(size);
   std::vector<int> displs(size, 0);
   int offset = 0;
@@ -160,10 +156,6 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
       firstdq.push_back(std::move(local_th_mas));
     }
   }
-  if (rank == 0) {
-    printf("HERE2 %d %d\n", rank, firstdq[0][0]);
-    fflush(stdout);
-  }
   flag = static_cast<int>(firstdq.size()) != 1;
   std::vector<std::thread> threads(max_th);
   while (flag) {
@@ -187,10 +179,6 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   std::vector<int> local_res;
   if (!firstdq.empty()) {
     local_res = std::move(firstdq.front());
-    if (rank == 0) {
-      printf("HERE3 %d\n", local_res[0]);
-      fflush(stdout);
-    }
   }
   std::deque<std::vector<int>> globdq_A;
   if (rank == 0) {
@@ -215,8 +203,6 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   }
 
   if (rank == 0) {
-    printf("HERE4 %d\n", globdq_A[0][0]);
-    fflush(stdout);
     flag = static_cast<int>(globdq_A.size()) != 1;
     std::vector<std::thread> ts(max_th);
     std::deque<std::vector<int>> globdq_B;
@@ -235,11 +221,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
       std::swap(globdq_A, globdq_B);
       flag = static_cast<int>(globdq_A.size()) != 1;
     }
-    printf("HERE6 %zd %d %d\n", globdq_A.size(), globdq_A[0][0], globdq_A[0][1]);
-    fflush(stdout);
     output_ = std::move(globdq_A.front());
-    printf("HERE7 %d %d %d\n", output_[0], output_[1], output_[2]);
-    fflush(stdout);
   }
   MPI_Barrier(MPI_COMM_WORLD);
   return true;
@@ -247,14 +229,9 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
 
 bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::PostProcessingImpl() {
   if (world_.rank() == 0) {
-    printf("HERE8 %d %d %d\n", output_[0], output_[1], output_[2]);
-    fflush(stdout);
     for (size_t i = 0; i < output_.size(); i++) {
       reinterpret_cast<int *>(task_data->outputs[0])[i] = output_[i];
     }
-    printf("WY %d %d %d\n", reinterpret_cast<int *>(task_data->outputs[0])[0],
-           reinterpret_cast<int *>(task_data->outputs[0])[1], reinterpret_cast<int *>(task_data->outputs[0])[2]);
-    fflush(stdout);
   }
   return true;
 }

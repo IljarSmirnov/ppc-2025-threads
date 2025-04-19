@@ -25,10 +25,12 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_pipeline_run) {
 
   // Create task_data
   auto task_data_all = std::make_shared<ppc::core::TaskData>();
-  task_data_all->inputs.emplace_back(reinterpret_cast<uint8_t*>(in.data()));
-  task_data_all->inputs_count.emplace_back(in.size());
-  task_data_all->outputs.emplace_back(reinterpret_cast<uint8_t*>(out.data()));
-  task_data_all->outputs_count.emplace_back(out.size());
+  if (world.rank() == 0) {
+    task_data_all->inputs.emplace_back(reinterpret_cast<uint8_t*>(in.data()));
+    task_data_all->inputs_count.emplace_back(in.size());
+    task_data_all->outputs.emplace_back(reinterpret_cast<uint8_t*>(out.data()));
+    task_data_all->outputs_count.emplace_back(out.size());
+  }
 
   // Create Task
   auto test_task_all = std::make_shared<smirnov_i_radix_sort_simple_merge_all::TestTaskALL>(task_data_all);
@@ -49,7 +51,9 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_pipeline_run) {
   auto perf_analyzer = std::make_shared<ppc::core::Perf>(test_task_all);
   perf_analyzer->PipelineRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
-  ASSERT_EQ(exp_out, out);
+  if (world.rank() == 0) {
+    ASSERT_EQ(exp_out, out);
+  }
 }
 
 TEST(smirnov_i_radix_sort_simple_merge_all, test_task_run) {
@@ -67,10 +71,12 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_task_run) {
 
   // Create task_data
   auto task_data_all = std::make_shared<ppc::core::TaskData>();
-  task_data_all->inputs.emplace_back(reinterpret_cast<uint8_t*>(in.data()));
-  task_data_all->inputs_count.emplace_back(in.size());
-  task_data_all->outputs.emplace_back(reinterpret_cast<uint8_t*>(out.data()));
-  task_data_all->outputs_count.emplace_back(out.size());
+  if (world.rank() == 0) {
+    task_data_all->inputs.emplace_back(reinterpret_cast<uint8_t*>(in.data()));
+    task_data_all->inputs_count.emplace_back(in.size());
+    task_data_all->outputs.emplace_back(reinterpret_cast<uint8_t*>(out.data()));
+    task_data_all->outputs_count.emplace_back(out.size());
+  }
 
   // Create Task
   auto test_task_all = std::make_shared<smirnov_i_radix_sort_simple_merge_all::TestTaskALL>(task_data_all);
@@ -91,5 +97,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_task_run) {
   auto perf_analyzer = std::make_shared<ppc::core::Perf>(test_task_all);
   perf_analyzer->TaskRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
-  ASSERT_EQ(exp_out, out);
+  if (world.rank() == 0) {
+    ASSERT_EQ(exp_out, out);
+  }
 }
