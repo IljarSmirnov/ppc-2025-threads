@@ -7,8 +7,8 @@
 #include <random>
 #include <vector>
 
-#include "core/task/include/task.hpp"
 #include "all/smirnov_i_radix_sort_simple_merge/include/ops_all.hpp"
+#include "core/task/include/task.hpp"
 
 TEST(smirnov_i_radix_sort_simple_merge_all, test_wrong_size) {
   // Create data
