@@ -18,7 +18,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_wrong_size) {
 
   // Create task_data
   auto test_data_all = std::make_shared<ppc::core::TaskData>();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     test_data_all->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
     test_data_all->inputs_count.emplace_back(in.size());
     test_data_all->outputs.emplace_back(reinterpret_cast<uint8_t *>(out.data()));
@@ -39,7 +39,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_scalar) {
 
   // Create task_data
   auto test_data_all = std::make_shared<ppc::core::TaskData>();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     test_data_all->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
     test_data_all->inputs_count.emplace_back(in.size());
     test_data_all->outputs.emplace_back(reinterpret_cast<uint8_t *>(out.data()));
@@ -52,7 +52,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_scalar) {
   test_task_all.PreProcessing();
   test_task_all.Run();
   test_task_all.PostProcessing();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     EXPECT_EQ(exp_out, out);
   }
 }
@@ -64,7 +64,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_17_elem) {
   std::vector<int> out(17);
   // Create task_data
   auto test_data_all = std::make_shared<ppc::core::TaskData>();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     test_data_all->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
     test_data_all->inputs_count.emplace_back(in.size());
     test_data_all->outputs.emplace_back(reinterpret_cast<uint8_t *>(out.data()));
@@ -77,7 +77,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_17_elem) {
   test_task_all.PreProcessing();
   test_task_all.Run();
   test_task_all.PostProcessing();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     EXPECT_EQ(exp_out, out);
   }
 }
@@ -89,7 +89,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_10_elem) {
 
   // Create task_data
   auto test_data_all = std::make_shared<ppc::core::TaskData>();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     test_data_all->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
     test_data_all->inputs_count.emplace_back(in.size());
     test_data_all->outputs.emplace_back(reinterpret_cast<uint8_t *>(out.data()));
@@ -102,7 +102,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_10_elem) {
   test_task_all.PreProcessing();
   test_task_all.Run();
   test_task_all.PostProcessing();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     EXPECT_EQ(exp_out, out);
   }
 }
@@ -121,7 +121,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_256_elem_sorted) {
 
   // Create task_data
   auto test_data_all = std::make_shared<ppc::core::TaskData>();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     test_data_all->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
     test_data_all->inputs_count.emplace_back(in.size());
     test_data_all->outputs.emplace_back(reinterpret_cast<uint8_t *>(out.data()));
@@ -134,7 +134,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_256_elem_sorted) {
   test_task_all.PreProcessing();
   test_task_all.Run();
   test_task_all.PostProcessing();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     EXPECT_EQ(exp_out, out);
   }
 }
@@ -153,7 +153,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_reverse_order) {
   }
   // Create task_data
   auto test_data_all = std::make_shared<ppc::core::TaskData>();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     test_data_all->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
     test_data_all->inputs_count.emplace_back(in.size());
     test_data_all->outputs.emplace_back(reinterpret_cast<uint8_t *>(out.data()));
@@ -166,7 +166,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_reverse_order) {
   test_task_all.PreProcessing();
   test_task_all.Run();
   test_task_all.PostProcessing();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     EXPECT_EQ(exp_out, out);
   }
 }
@@ -188,7 +188,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_double_reverse_order) {
   }
   // Create task_data
   auto test_data_all = std::make_shared<ppc::core::TaskData>();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     test_data_all->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
     test_data_all->inputs_count.emplace_back(in.size());
     test_data_all->outputs.emplace_back(reinterpret_cast<uint8_t *>(out.data()));
@@ -201,7 +201,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_double_reverse_order) {
   test_task_all.PreProcessing();
   test_task_all.Run();
   test_task_all.PostProcessing();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     EXPECT_EQ(exp_out, out);
   }
 }
@@ -222,7 +222,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_771_elem) {
   std::ranges::sort(exp_out);
   // Create task_data
   auto test_data_all = std::make_shared<ppc::core::TaskData>();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     test_data_all->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
     test_data_all->inputs_count.emplace_back(in.size());
     test_data_all->outputs.emplace_back(reinterpret_cast<uint8_t *>(out.data()));
@@ -235,7 +235,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_771_elem) {
   test_task_all.PreProcessing();
   test_task_all.Run();
   test_task_all.PostProcessing();
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     EXPECT_EQ(exp_out, out);
   }
 }
