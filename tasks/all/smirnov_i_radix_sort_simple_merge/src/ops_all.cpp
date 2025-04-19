@@ -183,9 +183,9 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   std::vector<int> local_res;
   if (!firstdq.empty()) {
     local_res = std::move(firstdq.front());
+    printf("HERE3 %d\n", local_res[0]);
+    fflush(stdout);
   }
-  printf("HERE3 %d\n", local_res[0]);
-  fflush(stdout);
   std::deque<std::vector<int>> globdq_A;
   if (rank == 0) {
     std::vector<int> local_sorted;
