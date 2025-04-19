@@ -122,8 +122,10 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   int rank;
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  printf("HERE1 %d\n", mas_[0]);
-  fflush(stdout);
+  if (rank == 0) {
+    printf("HERE1 %d\n", mas_[0]);
+    fflush(stdout);
+  }
   std::vector<int> sendcounts(size);
   std::vector<int> displs(size, 0);
   int offset = 0;
@@ -158,8 +160,10 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
       firstdq.push_back(std::move(local_th_mas));
     }
   }
-  printf("HERE2 %d %d\n", rank, firstdq[0][0]);
-  fflush(stdout);
+  if (rank == 0) {
+    printf("HERE2 %d %d\n", rank, firstdq[0][0]);
+    fflush(stdout);
+  }
   flag = static_cast<int>(firstdq.size()) != 1;
   std::vector<std::thread> threads(max_th);
   while (flag) {
@@ -183,8 +187,10 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   std::vector<int> local_res;
   if (!firstdq.empty()) {
     local_res = std::move(firstdq.front());
-    printf("HERE3 %d\n", local_res[0]);
-    fflush(stdout);
+    if (rank == 0) {
+      printf("HERE3 %d\n", local_res[0]);
+      fflush(stdout);
+    }
   }
   std::deque<std::vector<int>> globdq_A;
   if (rank == 0) {
