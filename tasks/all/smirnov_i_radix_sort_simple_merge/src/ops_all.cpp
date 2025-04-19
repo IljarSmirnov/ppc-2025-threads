@@ -139,7 +139,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   std::vector<int> local_mas(sendcounts[rank]);
   MPI_Scatterv(mas_.data(), sendcounts.data(), displs.data(), MPI_INT, local_mas.data(), sendcounts[rank], MPI_INT, 0,
                MPI_COMM_WORLD);
-  
+
   int max_th = std::thread::hardware_concurrency();
   std::mutex mtxfirstdq;
   std::mutex mtx;
