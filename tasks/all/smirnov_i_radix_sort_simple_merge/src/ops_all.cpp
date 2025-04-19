@@ -217,7 +217,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
     while (flag) {
       for (int i = 0; i < max_th; i++) {
         ts[i] = std::thread(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, this, std::ref(globdq_A),
-                                 std::ref(globdq_B), std::ref(mtx));
+                            std::ref(globdq_B), std::ref(mtx));
       }
       for (auto &th : ts) {
         th.join();
