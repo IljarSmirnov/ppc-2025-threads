@@ -235,7 +235,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
       std::swap(globdq_A, globdq_B);
       flag = static_cast<int>(globdq_A.size()) != 1;
     }
-    printf("HERE6 %zd %d %d\n", globdq_A.size(), globdq_A[0][0],globdq_A[0][1]);
+    printf("HERE6 %zd %d %d\n", globdq_A.size(), globdq_A[0][0], globdq_A[0][1]);
     fflush(stdout);
     output_ = std::move(globdq_A.front());
     printf("HERE7 %d %d %d\n", output_[0], output_[1], output_[2]);
