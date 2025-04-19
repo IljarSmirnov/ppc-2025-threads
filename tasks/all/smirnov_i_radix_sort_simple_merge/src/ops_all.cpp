@@ -99,7 +99,7 @@ void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging(std::deque<std:
   }
 }
 bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::PreProcessingImpl() {
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     unsigned int input_size = task_data->inputs_count[0];
     auto *in_ptr = reinterpret_cast<int *>(task_data->inputs[0]);
     mas_ = std::vector<int>(in_ptr, in_ptr + input_size);
@@ -111,7 +111,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::PreProcessingImpl() {
 }
 bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::ValidationImpl() {
   bool is_valid = true;
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     task_data->inputs_count[0] == task_data->outputs_count[0];
   }
   MPI_Bcast(&is_valid, 1, MPI_C_BOOL, 0, MPI_COMM_WORLD);
@@ -146,7 +146,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   bool flag;
   std::vector<std::future<std::vector<int>>> ths(max_th);
   for (int i = 0; i < max_th; i++) {
-    ths[i] = std::async(std::launch::async, Sorting, i, std::ref(local_mas), max_th);
+    ths[i] = std::async(std::launch::async, Sorting, this, i, std::ref(local_mas), max_th);
   }
   std::deque<std::vector<int>> firstdq, seconddq;
   for (int i = 0; i < max_th; i++) {
@@ -160,7 +160,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   std::vector<std::thread> threads(max_th);
   while (flag) {
     for (int i = 0; i < max_th; i++) {
-      threads[i] = std::thread(Merging, std::ref(firstdq), std::ref(seconddq), std::ref(mtx));
+      threads[i] = std::thread(Merging, this, std::ref(firstdq), std::ref(seconddq), std::ref(mtx));
     }
     for (auto &th : threads) {
       th.join();
@@ -208,7 +208,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
     std::deque<std::vector<int>> globdq_B;
     while (flag) {
       for (int i = 0; i < max_th; i++) {
-        threads[i] = std::thread(Merging, std::ref(globdq_A), std::ref(globdq_B), std::ref(mtx));
+        threads[i] = std::thread(Merging, this, std::ref(globdq_A), std::ref(globdq_B), std::ref(mtx));
       }
       for (auto &th : threads) {
         th.join();
@@ -227,7 +227,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
 }
 
 bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::PostProcessingImpl() {
-  if (world.rank() == 0) {
+  if (world_.rank() == 0) {
     for (size_t i = 0; i < output_.size(); i++) {
       reinterpret_cast<int *>(task_data->outputs[0])[i] = output_[i];
     }
