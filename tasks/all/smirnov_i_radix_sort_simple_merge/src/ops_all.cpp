@@ -162,7 +162,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   while (flag) {
     for (int i = 0; i < max_th; i++) {
       threads[i] = std::thread(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, this, std::ref(firstdq),
-                                std::ref(seconddq), std::ref(mtx));
+                               std::ref(seconddq), std::ref(mtx));
     }
     for (auto &th : threads) {
       th.join();
@@ -209,7 +209,8 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
     std::deque<std::vector<int>> globdq_B;
     while (flag) {
       for (int i = 0; i < max_th; i++) {
-        threads[i] = std::thread(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, this, std::ref(globdq_A), std::ref(globdq_B), std::ref(mtx));
+        threads[i] = std::thread(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, this, std::ref(globdq_A),
+                                 std::ref(globdq_B), std::ref(mtx));
       }
       for (auto &th : threads) {
         th.join();
