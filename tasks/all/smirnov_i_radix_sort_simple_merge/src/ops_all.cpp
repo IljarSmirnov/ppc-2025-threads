@@ -122,7 +122,8 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   int rank;
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
+  printf("HERE1 %d\n", mas_[0]);
+  fflush(stdout);
   std::vector<int> sendcounts(size);
   std::vector<int> displs(size, 0);
   int offset = 0;
@@ -157,6 +158,8 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
       firstdq.push_back(std::move(local_th_mas));
     }
   }
+  printf("HERE2 %d %d\n", rank, firstdq[0][0]);
+  fflush(stdout);
   flag = static_cast<int>(firstdq.size()) != 1;
   std::vector<std::thread> threads(max_th);
   while (flag) {
@@ -181,6 +184,8 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   if (!firstdq.empty()) {
     local_res = std::move(firstdq.front());
   }
+  printf("HERE3 %d\n", local_res[0]);
+  fflush(stdout);
   std::deque<std::vector<int>> globdq_A;
   if (rank == 0) {
     std::vector<int> local_sorted;
@@ -204,6 +209,8 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   }
 
   if (rank == 0) {
+    printf("HERE4 %d\n", globdq_A[0][0]);
+    fflush(stdout);
     flag = static_cast<int>(globdq_A.size()) != 1;
     std::vector<std::thread> ts(max_th);
     std::deque<std::vector<int>> globdq_B;
@@ -222,7 +229,11 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
       std::swap(globdq_A, globdq_B);
       flag = static_cast<int>(globdq_A.size()) != 1;
     }
+    printf("HERE6 %ld\n", globdq_A.size());
+    fflush(stdout);
     output_ = std::move(globdq_A.front());
+    printf("HERE7 %d\n", output_[0]);
+    fflush(stdout);
   }
   MPI_Barrier(MPI_COMM_WORLD);
   return true;
@@ -230,6 +241,8 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
 
 bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::PostProcessingImpl() {
   if (world_.rank() == 0) {
+    printf("HERE8 %d\n", output_[0]);
+    fflush(stdout);
     for (size_t i = 0; i < output_.size(); i++) {
       reinterpret_cast<int *>(task_data->outputs[0])[i] = output_[i];
     }
