@@ -12,7 +12,7 @@
 
 TEST(smirnov_i_radix_sort_simple_merge_all, test_pipeline_run) {
   constexpr int kCount = 10000000;
-
+  boost::mpi::communicator world;
   // Create data
   std::vector<int> in(kCount, 0);
   std::vector<int> exp_out(kCount, 0);
@@ -58,7 +58,7 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_pipeline_run) {
 
 TEST(smirnov_i_radix_sort_simple_merge_all, test_task_run) {
   constexpr int kCount = 10000000;
-
+  boost::mpi::communicator world;
   // Create data
   std::vector<int> in(kCount, 0);
   std::vector<int> exp_out(kCount, 0);
