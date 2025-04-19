@@ -252,7 +252,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::PostProcessingImpl() {
     for (size_t i = 0; i < output_.size(); i++) {
       reinterpret_cast<int *>(task_data->outputs[0])[i] = output_[i];
     }
-    printf("WY %n %n %n\n", reinterpret_cast<int *>(task_data->outputs[0])[0],
+    printf("WY %d %d %d\n", reinterpret_cast<int *>(task_data->outputs[0])[0],
            reinterpret_cast<int *>(task_data->outputs[0])[1], reinterpret_cast<int *>(task_data->outputs[0])[2]);
     fflush(stdout);
   }
