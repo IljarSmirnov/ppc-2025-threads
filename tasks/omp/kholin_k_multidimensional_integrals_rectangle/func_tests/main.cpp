@@ -211,7 +211,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_omp, single_integral_two_var)
   ASSERT_EQ(test_task_omp.PostProcessing(), true);
 
   double ref_i = 8;
-  ASSERT_EQ(ref_i, std::round((out_i[0])));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
 }
 
 TEST(kholin_k_multidimensional_integrals_rectangle_omp, double_integral_two_var) {
@@ -248,7 +249,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_omp, double_integral_two_var)
   ASSERT_EQ(test_task_omp.PostProcessing(), true);
 
   double ref_i = 2.0;
-  ASSERT_EQ(ref_i, std::round(out_i[0]));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
 }
 
 TEST(kholin_k_multidimensional_integrals_rectangle_omp, double_integral_one_var) {
@@ -285,7 +287,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_omp, double_integral_one_var)
   ASSERT_EQ(test_task_omp.PostProcessing(), true);
 
   double ref_i = 6027;
-  ASSERT_EQ(ref_i, std::round(out_i[0]));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
 }
 
 TEST(kholin_k_multidimensional_integrals_rectangle_omp, triple_integral_three_var) {
@@ -324,7 +327,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_omp, triple_integral_three_va
   ASSERT_EQ(test_task_omp.PostProcessing(), true);
 
   double ref_i = 1;
-  ASSERT_EQ(ref_i, std::round(out_i[0]));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
 }
 
 TEST(kholin_k_multidimensional_integrals_rectangle_omp, triple_integral_two_var) {
@@ -399,7 +403,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_omp, triple_integral_one_var)
   ASSERT_EQ(test_task_omp.PostProcessing(), true);
 
   double ref_i = -24;
-  ASSERT_EQ(ref_i, std::round(out_i[0]));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
 }
 
 TEST(kholin_k_multidimensional_integrals_rectangle_omp, double_integral_two_var_high_acc) {

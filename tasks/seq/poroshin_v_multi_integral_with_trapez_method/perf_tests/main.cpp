@@ -17,7 +17,7 @@ double F3advanced(std::vector<double> &arguments) {
 }  // namespace
 
 TEST(poroshin_v_multi_integral_with_trapez_method_seq, test_pipeline_run) {
-  std::vector<int> n = {250, 250, 250};
+  std::vector<int> n = {220, 220, 220};
   std::vector<double> a = {0.8, 1.9, 2.9};
   std::vector<double> b = {1.0, 2.0, 3.0};
   std::vector<double> out(1);
@@ -47,7 +47,7 @@ TEST(poroshin_v_multi_integral_with_trapez_method_seq, test_pipeline_run) {
 }
 
 TEST(poroshin_v_multi_integral_with_trapez_method_seq, test_task_run) {
-  std::vector<int> n = {250, 250, 250};
+  std::vector<int> n = {220, 220, 220};
   std::vector<double> a = {0.8, 1.9, 2.9};
   std::vector<double> b = {1.0, 2.0, 3.0};
   std::vector<double> out(1);

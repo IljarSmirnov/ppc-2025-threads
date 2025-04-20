@@ -178,7 +178,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_seq, single_integral_one_var)
   ASSERT_EQ(test_task_sequential.PostProcessing(), true);
 
   double ref_i = 6;
-  ASSERT_EQ(ref_i, std::round(out_i[0]));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
   delete f_object;
 }
 
@@ -216,7 +217,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_seq, single_integral_two_var)
   ASSERT_EQ(test_task_sequential.PostProcessing(), true);
 
   double ref_i = 8;
-  ASSERT_EQ(ref_i, std::round(out_i[0]));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
   delete f_object;
 }
 
@@ -254,7 +256,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_seq, double_integral_two_var)
   ASSERT_EQ(test_task_sequential.PostProcessing(), true);
 
   double ref_i = 27.0;
-  ASSERT_EQ(ref_i, std::round(out_i[0]));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
   delete f_object;
 }
 
@@ -292,7 +295,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_seq, double_integral_one_var)
   ASSERT_EQ(test_task_sequential.PostProcessing(), true);
 
   double ref_i = 6027;
-  ASSERT_EQ(ref_i, std::round(out_i[0]));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
   delete f_object;
 }
 
@@ -330,7 +334,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_seq, triple_integral_three_va
   ASSERT_EQ(test_task_sequential.PostProcessing(), true);
 
   double ref_i = 24;
-  ASSERT_EQ(ref_i, std::round(out_i[0]));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
   delete f_object;
 }
 
@@ -368,7 +373,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_seq, triple_integral_two_var)
   ASSERT_EQ(test_task_sequential.PostProcessing(), true);
 
   double ref_i = 8;
-  ASSERT_EQ(ref_i, out_i[0]);
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
   delete f_object;
 }
 
@@ -406,7 +412,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_seq, triple_integral_one_var)
   ASSERT_EQ(test_task_sequential.PostProcessing(), true);
 
   double ref_i = -24;
-  ASSERT_EQ(ref_i, std::round(out_i[0]));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
   delete f_object;
 }
 

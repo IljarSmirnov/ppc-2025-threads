@@ -1,23 +1,36 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <chrono>
 #include <cstdint>
 #include <memory>
+#include <random>
 #include <vector>
 
 #include "core/perf/include/perf.hpp"
 #include "core/task/include/task.hpp"
 #include "seq/korovin_n_qsort_batcher/include/ops_seq.hpp"
 
+namespace {
+constexpr int kSize = 7000000;
+constexpr int kSeed = 25;
+
+std::vector<int> GenerateRndArray(int size, int seed) {
+  std::mt19937 gen(seed);
+  std::uniform_int_distribution<int> dist(-1000, 1000);
+
+  std::vector<int> result(size);
+  for (auto &elem : result) {
+    elem = dist(gen);
+  }
+  return result;
+}
+}  // namespace
+
 TEST(korovin_n_qsort_batcher_seq, test_pipeline_run) {
   // Create data
-  constexpr int kSize = 250000;
-  std::vector<int> in(kSize);
+  std::vector<int> in = GenerateRndArray(kSize, kSeed);
   std::vector<int> out(in.size());
-
-  for (int i = 0; i < kSize; i++) {
-    in[i] = kSize - i;
-  }
 
   // Create task_data
   auto task_data_seq = std::make_shared<ppc::core::TaskData>();
@@ -46,17 +59,13 @@ TEST(korovin_n_qsort_batcher_seq, test_pipeline_run) {
   auto perf_analyzer = std::make_shared<ppc::core::Perf>(test_task_sequential);
   perf_analyzer->PipelineRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
+  ASSERT_TRUE(std::ranges::is_sorted(out.begin(), out.end()));
 }
 
 TEST(korovin_n_qsort_batcher_seq, test_task_run) {
   // Create data
-  constexpr int kSize = 250000;
-  std::vector<int> in(kSize);
+  std::vector<int> in = GenerateRndArray(kSize, kSeed);
   std::vector<int> out(in.size());
-
-  for (int i = 0; i < kSize; i++) {
-    in[i] = kSize - i;
-  }
 
   // Create task_data
   auto task_data_seq = std::make_shared<ppc::core::TaskData>();
@@ -85,4 +94,5 @@ TEST(korovin_n_qsort_batcher_seq, test_task_run) {
   auto perf_analyzer = std::make_shared<ppc::core::Perf>(test_task_sequential);
   perf_analyzer->TaskRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
+  ASSERT_TRUE(std::ranges::is_sorted(out.begin(), out.end()));
 }

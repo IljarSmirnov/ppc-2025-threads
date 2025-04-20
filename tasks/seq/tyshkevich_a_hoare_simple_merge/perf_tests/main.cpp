@@ -14,19 +14,19 @@
 #include "core/task/include/task.hpp"
 #include "seq/tyshkevich_a_hoare_simple_merge/include/ops_seq.hpp"
 
-constexpr size_t kTestSequenceSize = 55555;
+constexpr size_t kTestSequenceSize = 54'000;
 
 namespace {
 template <typename T>
-std::vector<T> GenUnsortedSequence(size_t size) {
-  std::vector<T> vec(size);
-  std::iota(vec.rbegin(), vec.rend(), 0);
-  return vec;
+std::vector<T> RevSrtVec(size_t size) {
+  std::vector<T> rv(size);
+  std::iota(rv.rbegin(), rv.rend(), 0);
+  return rv;
 }
 }  // namespace
 
 TEST(tyshkevich_a_hoare_simple_merge_seq, test_pipeline_run) {
-  auto in = GenUnsortedSequence<int>(kTestSequenceSize);
+  auto in = RevSrtVec<int>(kTestSequenceSize);
   std::vector<int> out(in.size());
 
   auto dat = std::make_shared<ppc::core::TaskData>();
@@ -55,11 +55,11 @@ TEST(tyshkevich_a_hoare_simple_merge_seq, test_pipeline_run) {
   perf_analyzer->PipelineRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
 
-  ASSERT_TRUE(std::ranges::is_sorted(out, std::greater<>()));
+  EXPECT_TRUE(std::ranges::is_sorted(out, std::greater<>()));
 }
 
 TEST(tyshkevich_a_hoare_simple_merge_seq, test_task_run) {
-  auto in = GenUnsortedSequence<int>(kTestSequenceSize);
+  auto in = RevSrtVec<int>(kTestSequenceSize);
   std::vector<int> out(in.size());
 
   auto dat = std::make_shared<ppc::core::TaskData>();
@@ -85,5 +85,5 @@ TEST(tyshkevich_a_hoare_simple_merge_seq, test_task_run) {
   perf_analyzer->TaskRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
 
-  ASSERT_TRUE(std::ranges::is_sorted(out, std::greater<>()));
+  EXPECT_TRUE(std::ranges::is_sorted(out, std::greater<>()));
 }

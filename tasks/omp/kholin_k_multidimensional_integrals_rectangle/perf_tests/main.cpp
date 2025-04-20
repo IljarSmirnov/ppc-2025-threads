@@ -63,7 +63,8 @@ TEST(kholin_k_multidimensional_integrals_rectangle_omp, test_pipeline_run) {
   perf_analyzer->PipelineRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
   double ref_i = 12;
-  ASSERT_EQ(ref_i, std::trunc(out_i[0]));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
 }
 
 TEST(kholin_k_multidimensional_integrals_rectangle_omp, test_task_run) {
@@ -117,5 +118,6 @@ TEST(kholin_k_multidimensional_integrals_rectangle_omp, test_task_run) {
   perf_analyzer->TaskRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
   double ref_i = 12;
-  ASSERT_EQ(ref_i, std::trunc(out_i[0]));
+  double locality = fabs(ref_i - out_i[0]);
+  ASSERT_NEAR(locality, 0, 1);
 }

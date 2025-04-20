@@ -11,9 +11,8 @@
 #include "seq/laganina_e_component_labeling/include/ops_seq.hpp"
 
 TEST(laganina_e_component_labeling_seq, test_pipeline_run) {
-  constexpr int kCount = 1500;
+  constexpr int kCount = 2000;
 
-  // Create data
   std::vector<int> in(kCount * kCount, 0);
   std::vector<int> out(kCount * kCount, 0);
 
@@ -21,7 +20,6 @@ TEST(laganina_e_component_labeling_seq, test_pipeline_run) {
     in[i] = 1;
   }
 
-  // Create task_data
   auto task_data_seq = std::make_shared<ppc::core::TaskData>();
   task_data_seq->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
   task_data_seq->inputs_count.emplace_back(kCount);

@@ -18,7 +18,7 @@ std::vector<int> GetRandomVector(int sz) {
   std::mt19937 gen(dev());
   std::vector<int> vec(sz);
   for (int i = 0; i < sz; i++) {
-    vec[i] = (int)(gen() % 100);
+    vec[i] = (int)((gen() % (200)) - 100);
   }
   return vec;
 }
@@ -35,7 +35,7 @@ bool IsSorted(std::vector<int> data) {
 }
 }  // namespace
 TEST(solovyev_d_shell_sort_simple_seq, test_pipeline_run) {
-  constexpr int kCount = 500000;
+  constexpr int kCount = 5000000;
 
   // Create data
   std::vector<int> in = GetRandomVector(kCount);
@@ -72,7 +72,7 @@ TEST(solovyev_d_shell_sort_simple_seq, test_pipeline_run) {
 }
 
 TEST(solovyev_d_shell_sort_simple_seq, test_task_run) {
-  constexpr int kCount = 500000;
+  constexpr int kCount = 5000000;
 
   // Create data
   std::vector<int> in = GetRandomVector(kCount);

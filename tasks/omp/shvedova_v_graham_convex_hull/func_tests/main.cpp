@@ -43,7 +43,7 @@ std::vector<double> GenSrc(int count) {
   std::vector<double> points;
   points.reserve(count * 2);
   std::mt19937 gen(std::random_device{}());
-  std::uniform_real_distribution<> dis(-2.55, 4.05);
+  std::uniform_real_distribution<> dis(-4.0, 4.0);
   for (int i = 0; i < count; ++i) {
     points.push_back(dis(gen));
     points.push_back(dis(gen));

@@ -15,12 +15,9 @@ namespace {
 [[nodiscard]] std::tuple<std::size_t, vasilev_s_simpson_multidim::IntegrandFunction,
                          std::vector<vasilev_s_simpson_multidim::Bound>>
 BuildTest() {
-  return {18,
-          [](const auto &coord) { return coord[0] + coord[1] + coord[2] + coord[3] + coord[4]; },
+  return {400,
+          [](const auto &coord) { return coord[0] + coord[1] + coord[2]; },
           {
-              {.lo = 0., .hi = 1.},
-              {.lo = 0., .hi = 1.},
-              {.lo = 0., .hi = 1.},
               {.lo = 0., .hi = 1.},
               {.lo = 0., .hi = 1.},
               {.lo = 0., .hi = 1.},

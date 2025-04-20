@@ -107,7 +107,7 @@ TEST(zaitsev_a_labeling_seq, test_pipeline_run) {
 TEST(zaitsev_a_labeling_seq, test_task_run) {
 #ifndef _WIN32
   const int width = 1000;
-  const int height = 900;
+  const int height = 1000;
   std::vector<std::uint8_t> in(width * height);
   std::vector<std::uint16_t> out(width * height);
   std::vector<std::uint16_t> exp(width * height);
