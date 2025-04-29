@@ -70,7 +70,7 @@ TEST(smirnov_i_radix_sort_simple_merge_stl, test_23_identical_elem) {
   auto test_data_stl = std::make_shared<ppc::core::TaskData>();
   end = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout<< "111" << dur << "\n";
+  std::cout << "111" << dur << "\n";
   start = std::chrono::high_resolution_clock::now();
   test_data_stl->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
   test_data_stl->inputs_count.emplace_back(in.size());
@@ -78,7 +78,7 @@ TEST(smirnov_i_radix_sort_simple_merge_stl, test_23_identical_elem) {
   test_data_stl->outputs_count.emplace_back(out.size());
   end = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout<< "222" << dur << "\n";
+  std::cout << "222" << dur << "\n";
 
   // Create Task
   start = std::chrono::high_resolution_clock::now();
@@ -86,23 +86,23 @@ TEST(smirnov_i_radix_sort_simple_merge_stl, test_23_identical_elem) {
   ASSERT_EQ(test_task_stl.Validation(), true);
   end = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout<< "333" << dur << "\n";
+  std::cout << "333" << dur << "\n";
   start = std::chrono::high_resolution_clock::now();
   test_task_stl.PreProcessing();
   end = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout<< "444" << dur << "\n";
+  std::cout << "444" << dur << "\n";
   start = std::chrono::high_resolution_clock::now();
   test_task_stl.Run();
   end = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout<< "555" << dur << "\n";
+  std::cout << "555" << dur << "\n";
   start = std::chrono::high_resolution_clock::now();
   test_task_stl.PostProcessing();
   EXPECT_EQ(exp_out, out);
   end = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout<< "666" << dur << "\n";
+  std::cout << "666" << dur << "\n";
 }
 TEST(smirnov_i_radix_sort_simple_merge_stl, test_17_elem) {
   // Create data
@@ -124,7 +124,7 @@ TEST(smirnov_i_radix_sort_simple_merge_stl, test_17_elem) {
   auto test_data_stl = std::make_shared<ppc::core::TaskData>();
   end = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout<< "111" << dur << "\n";
+  std::cout << "111" << dur << "\n";
   start = std::chrono::high_resolution_clock::now();
   test_data_stl->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
   test_data_stl->inputs_count.emplace_back(in.size());
@@ -132,7 +132,7 @@ TEST(smirnov_i_radix_sort_simple_merge_stl, test_17_elem) {
   test_data_stl->outputs_count.emplace_back(out.size());
   end = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout<< "222" << dur << "\n";
+  std::cout << "222" << dur << "\n";
 
   // Create Task
   start = std::chrono::high_resolution_clock::now();
@@ -140,23 +140,23 @@ TEST(smirnov_i_radix_sort_simple_merge_stl, test_17_elem) {
   ASSERT_EQ(test_task_stl.Validation(), true);
   end = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout<< "333" << dur << "\n";
+  std::cout << "333" << dur << "\n";
   start = std::chrono::high_resolution_clock::now();
   test_task_stl.PreProcessing();
   end = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout<< "444" << dur << "\n";
+  std::cout << "444" << dur << "\n";
   start = std::chrono::high_resolution_clock::now();
   test_task_stl.Run();
   end = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout<< "555" << dur << "\n";
+  std::cout << "555" << dur << "\n";
   start = std::chrono::high_resolution_clock::now();
   test_task_stl.PostProcessing();
   EXPECT_EQ(exp_out, out);
   end = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-  std::cout<< "666" << dur << "\n";
+  std::cout << "666" << dur << "\n";
 }
 
 TEST(smirnov_i_radix_sort_simple_merge_stl, test_10_elem) {
