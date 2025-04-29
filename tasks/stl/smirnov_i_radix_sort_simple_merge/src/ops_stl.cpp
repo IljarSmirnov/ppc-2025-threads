@@ -136,14 +136,16 @@ bool smirnov_i_radix_sort_simple_merge_stl::TestTaskSTL::RunImpl() {
   auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   std::cout << "fffff " << dur << "\n";
   bool flag = static_cast<int>(firstdq.size()) != 1;
-  std::vector<std::thread> threads(max_th);
+  std::vector<std::thread> threads{};
   int pairs = max_th;
   auto start = std::chrono::high_resolution_clock::now();
   while (flag) {
     pairs = (static_cast<int>(firstdq.size()) + 1) / 2;
+    threads.clear();
+    threads.reserve(pairs);
     for (int i = 0; i < pairs; i++) {
-      threads[i] = std::thread(&smirnov_i_radix_sort_simple_merge_stl::TestTaskSTL::Merging, std::ref(firstdq),
-                               std::ref(seconddq), std::ref(mtx));
+      threads.push_back(std::thread(&smirnov_i_radix_sort_simple_merge_stl::TestTaskSTL::Merging, std::ref(firstdq),
+                                    std::ref(seconddq), std::ref(mtx)));
     }
     for (auto &th : threads) {
       th.join();
