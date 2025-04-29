@@ -7,6 +7,7 @@
 #include <deque>
 #include <functional>
 #include <future>
+#include <iostream>
 #include <mutex>
 #include <numeric>
 #include <thread>
@@ -138,7 +139,7 @@ bool smirnov_i_radix_sort_simple_merge_stl::TestTaskSTL::RunImpl() {
   bool flag = static_cast<int>(firstdq.size()) != 1;
   std::vector<std::thread> threads{};
   int pairs = max_th;
-  auto start = std::chrono::high_resolution_clock::now();
+  start = std::chrono::high_resolution_clock::now();
   while (flag) {
     pairs = (static_cast<int>(firstdq.size()) + 1) / 2;
     threads.clear();
@@ -158,8 +159,8 @@ bool smirnov_i_radix_sort_simple_merge_stl::TestTaskSTL::RunImpl() {
     flag = static_cast<int>(firstdq.size()) != 1;
   }
   output_ = std::move(firstdq.front());
-  auto end = std::chrono::high_resolution_clock::now();
-  auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  end = std::chrono::high_resolution_clock::now();
+  dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   std::cout << "sssss " << dur << "\n";
   return true;
 }
