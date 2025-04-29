@@ -62,14 +62,11 @@ TEST(smirnov_i_radix_sort_simple_merge_stl, test_23_identical_elem) {
     in[i] = 17;
     exp_out[i] = 17;
   }
-  auto start;
-  auto end;
-  auto dur;
   // Create task_data
-  start = std::chrono::high_resolution_clock::now();
+  auto start = std::chrono::high_resolution_clock::now();
   auto test_data_stl = std::make_shared<ppc::core::TaskData>();
-  end = std::chrono::high_resolution_clock::now();
-  dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  auto end = std::chrono::high_resolution_clock::now();
+  auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   std::cout << "111" << dur << "\n";
   start = std::chrono::high_resolution_clock::now();
   test_data_stl->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
@@ -109,21 +106,12 @@ TEST(smirnov_i_radix_sort_simple_merge_stl, test_17_elem) {
   std::vector<int> in{6, 134, 0, 6, 7, 1, 2, 4, 5, 3268, 6, 1, 8, 4, 234, 123120, 4};
   std::vector<int> exp_out{0, 1, 1, 2, 4, 4, 4, 5, 6, 6, 6, 7, 8, 134, 234, 3268, 123120};
   std::vector<int> out(17);
-  // Create task_data
-  auto test_data_stl = std::make_shared<ppc::core::TaskData>();
-  test_data_stl->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
-  test_data_stl->inputs_count.emplace_back(in.size());
-  test_data_stl->outputs.emplace_back(reinterpret_cast<uint8_t *>(out.data()));
-  test_data_stl->outputs_count.emplace_back(out.size());
 
-  auto start;
-  auto end;
-  auto dur;
   // Create task_data
-  start = std::chrono::high_resolution_clock::now();
+  auto start = std::chrono::high_resolution_clock::now();
   auto test_data_stl = std::make_shared<ppc::core::TaskData>();
-  end = std::chrono::high_resolution_clock::now();
-  dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  auto end = std::chrono::high_resolution_clock::now();
+  auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   std::cout << "111" << dur << "\n";
   start = std::chrono::high_resolution_clock::now();
   test_data_stl->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
