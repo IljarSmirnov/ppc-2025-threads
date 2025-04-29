@@ -1,6 +1,7 @@
 #include "stl/smirnov_i_radix_sort_simple_merge/include/ops_stl.hpp"
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <cstddef>
 #include <deque>
@@ -117,6 +118,7 @@ bool smirnov_i_radix_sort_simple_merge_stl::TestTaskSTL::RunImpl() {
   std::mutex mtxfirstdq;
   std::mutex mtx;
   std::vector<std::future<std::vector<int>>> ths(max_th);
+  auto start = std::chrono::high_resolution_clock::now();
   for (int i = 0; i < max_th; i++) {
     ths[i] = std::async(std::launch::async, &smirnov_i_radix_sort_simple_merge_stl::TestTaskSTL::Sorting, i,
                         std::ref(mas_), max_th);
@@ -130,9 +132,13 @@ bool smirnov_i_radix_sort_simple_merge_stl::TestTaskSTL::RunImpl() {
       firstdq.push_back(std::move(local_mas));
     }
   }
+  auto end = std::chrono::high_resolution_clock::now();
+  auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  std::cout << "fffff " << dur << "\n";
   bool flag = static_cast<int>(firstdq.size()) != 1;
   std::vector<std::thread> threads(max_th);
   int pairs = max_th;
+  auto start = std::chrono::high_resolution_clock::now();
   while (flag) {
     pairs = (static_cast<int>(firstdq.size()) + 1) / 2;
     for (int i = 0; i < pairs; i++) {
@@ -150,6 +156,9 @@ bool smirnov_i_radix_sort_simple_merge_stl::TestTaskSTL::RunImpl() {
     flag = static_cast<int>(firstdq.size()) != 1;
   }
   output_ = std::move(firstdq.front());
+  auto end = std::chrono::high_resolution_clock::now();
+  auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  std::cout << "sssss " << dur << "\n";
   return true;
 }
 
