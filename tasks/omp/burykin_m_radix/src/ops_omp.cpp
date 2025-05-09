@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-std::array<int, 256> burykin_m_radix_seq::RadixOMP::ComputeFrequency(const std::vector<int>& a, const int shift) {
+std::array<int, 256> burykin_m_radix_omp::RadixOMP::ComputeFrequency(const std::vector<int>& a, const int shift) {
   std::array<int, 256> count = {};
 
 #pragma omp parallel default(none) shared(a, count, shift)
@@ -34,7 +34,7 @@ std::array<int, 256> burykin_m_radix_seq::RadixOMP::ComputeFrequency(const std::
   return count;
 }
 
-std::array<int, 256> burykin_m_radix_seq::RadixOMP::ComputeIndices(const std::array<int, 256>& count) {
+std::array<int, 256> burykin_m_radix_omp::RadixOMP::ComputeIndices(const std::array<int, 256>& count) {
   std::array<int, 256> index = {0};
   // This loop has sequential dependency, cannot be parallelized
   for (int i = 1; i < 256; ++i) {
@@ -43,7 +43,7 @@ std::array<int, 256> burykin_m_radix_seq::RadixOMP::ComputeIndices(const std::ar
   return index;
 }
 
-void burykin_m_radix_seq::RadixOMP::DistributeElements(const std::vector<int>& a, std::vector<int>& b,
+void burykin_m_radix_omp::RadixOMP::DistributeElements(const std::vector<int>& a, std::vector<int>& b,
                                                        std::array<int, 256> index, const int shift) {
   // Create a copy of indices for parallel access
   std::array<int, 256> local_index = index;
@@ -77,7 +77,7 @@ void burykin_m_radix_seq::RadixOMP::DistributeElements(const std::vector<int>& a
   }
 }
 
-bool burykin_m_radix_seq::RadixOMP::PreProcessingImpl() {
+bool burykin_m_radix_omp::RadixOMP::PreProcessingImpl() {
   const unsigned int input_size = task_data->inputs_count[0];
   auto* in_ptr = reinterpret_cast<int*>(task_data->inputs[0]);
   input_ = std::vector<int>(in_ptr, in_ptr + input_size);
@@ -86,11 +86,11 @@ bool burykin_m_radix_seq::RadixOMP::PreProcessingImpl() {
   return true;
 }
 
-bool burykin_m_radix_seq::RadixOMP::ValidationImpl() {
+bool burykin_m_radix_omp::RadixOMP::ValidationImpl() {
   return task_data->inputs_count[0] == task_data->outputs_count[0];
 }
 
-bool burykin_m_radix_seq::RadixOMP::RunImpl() {
+bool burykin_m_radix_omp::RadixOMP::RunImpl() {
   if (input_.empty()) {
     return true;
   }
@@ -117,7 +117,7 @@ bool burykin_m_radix_seq::RadixOMP::RunImpl() {
   return true;
 }
 
-bool burykin_m_radix_seq::RadixOMP::PostProcessingImpl() {
+bool burykin_m_radix_omp::RadixOMP::PostProcessingImpl() {
   auto* output_ptr = reinterpret_cast<int*>(task_data->outputs[0]);
   const auto output_size = static_cast<int>(output_.size());
 

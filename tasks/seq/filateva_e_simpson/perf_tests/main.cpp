@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <chrono>
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -11,16 +12,16 @@
 #include "seq/filateva_e_simpson/include/ops_seq.hpp"
 
 TEST(filateva_e_simpson_seq, test_pipeline_run) {
-  size_t mer = 1;
-  size_t steps = 10000000;
-  std::vector<double> a = {1};
-  std::vector<double> b = {1000};
+  size_t mer = 2;
+  size_t steps = 3000;
+  std::vector<double> a = {1, 1};
+  std::vector<double> b = {300, 300};
   std::vector<double> res(1, 0);
-  filateva_e_simpson_seq::Func f = [](std::vector<double> x) {
-    if (x.empty()) {
+  filateva_e_simpson_seq::Func f = [](std::vector<double> per) {
+    if (per.empty()) {
       return 0.0;
     }
-    return x[0] * x[0];
+    return std::pow(per[0], 2) + std::pow(per[1], 2);
   };
 
   auto task_data = std::make_shared<ppc::core::TaskData>();
@@ -50,27 +51,20 @@ TEST(filateva_e_simpson_seq, test_pipeline_run) {
   perf_analyzer->PipelineRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
 
-  filateva_e_simpson_seq::Func integral_f = [](std::vector<double> x) {
-    if (x.empty()) {
-      return 0.0;
-    }
-    return x[0] * x[0] * x[0] / 3;
-  };
-
-  ASSERT_NEAR(res[0], integral_f(b) - integral_f(a), 0.01);
+  ASSERT_NEAR(res[0], 5381999800.666, 0.01);
 }
 
 TEST(filateva_e_simpson_seq, test_task_run) {
-  size_t mer = 1;
-  size_t steps = 10000000;
-  std::vector<double> a = {1};
-  std::vector<double> b = {1000};
+  size_t mer = 2;
+  size_t steps = 3000;
+  std::vector<double> a = {1, 1};
+  std::vector<double> b = {300, 300};
   std::vector<double> res(1, 0);
-  filateva_e_simpson_seq::Func f = [](std::vector<double> x) {
-    if (x.empty()) {
+  filateva_e_simpson_seq::Func f = [](std::vector<double> per) {
+    if (per.empty()) {
       return 0.0;
     }
-    return x[0] * x[0];
+    return std::pow(per[0], 2) + std::pow(per[1], 2);
   };
 
   auto task_data = std::make_shared<ppc::core::TaskData>();
@@ -100,12 +94,5 @@ TEST(filateva_e_simpson_seq, test_task_run) {
   perf_analyzer->TaskRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
 
-  filateva_e_simpson_seq::Func integral_f = [](std::vector<double> x) {
-    if (x.empty()) {
-      return 0.0;
-    }
-    return x[0] * x[0] * x[0] / 3;
-  };
-
-  ASSERT_NEAR(res[0], integral_f(b) - integral_f(a), 0.01);
+  ASSERT_NEAR(res[0], 5381999800.666, 0.01);
 }

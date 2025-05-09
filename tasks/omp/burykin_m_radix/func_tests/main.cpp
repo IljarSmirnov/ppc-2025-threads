@@ -25,7 +25,7 @@ std::vector<int> GenerateRandomVector(size_t size, int min_val = -1000, int max_
 
 }  // namespace
 
-TEST(burykin_m_radix_seq, AlreadySorted) {
+TEST(burykin_m_radix_omp, AlreadySorted) {
   std::vector<int> input = {-5, -3, 0, 2, 3, 10};
   std::vector<int> expected = input;
   std::vector<int> output(input.size(), 0);
@@ -36,7 +36,7 @@ TEST(burykin_m_radix_seq, AlreadySorted) {
   task_data->outputs.push_back(reinterpret_cast<uint8_t*>(output.data()));
   task_data->outputs_count.push_back(static_cast<std::uint32_t>(output.size()));
 
-  burykin_m_radix_seq::RadixOMP task(task_data);
+  burykin_m_radix_omp::RadixOMP task(task_data);
   ASSERT_TRUE(task.Validation());
   task.PreProcessing();
   task.Run();
@@ -45,7 +45,7 @@ TEST(burykin_m_radix_seq, AlreadySorted) {
   EXPECT_EQ(output, expected);
 }
 
-TEST(burykin_m_radix_seq, ReverseSorted) {
+TEST(burykin_m_radix_omp, ReverseSorted) {
   std::vector<int> input = {10, 3, 2, 0, -3, -5};
   std::vector<int> expected = input;
   std::ranges::sort(expected);
@@ -57,7 +57,7 @@ TEST(burykin_m_radix_seq, ReverseSorted) {
   task_data->outputs.push_back(reinterpret_cast<uint8_t*>(output.data()));
   task_data->outputs_count.push_back(static_cast<std::uint32_t>(output.size()));
 
-  burykin_m_radix_seq::RadixOMP task(task_data);
+  burykin_m_radix_omp::RadixOMP task(task_data);
   ASSERT_TRUE(task.Validation());
   task.PreProcessing();
   task.Run();
@@ -66,7 +66,7 @@ TEST(burykin_m_radix_seq, ReverseSorted) {
   EXPECT_EQ(output, expected);
 }
 
-TEST(burykin_m_radix_seq, RandomVector) {
+TEST(burykin_m_radix_omp, RandomVector) {
   constexpr size_t kSize = 1000;
   std::vector<int> input = GenerateRandomVector(kSize);
   std::vector<int> expected = input;
@@ -79,7 +79,7 @@ TEST(burykin_m_radix_seq, RandomVector) {
   task_data->outputs.push_back(reinterpret_cast<uint8_t*>(output.data()));
   task_data->outputs_count.push_back(static_cast<std::uint32_t>(output.size()));
 
-  burykin_m_radix_seq::RadixOMP task(task_data);
+  burykin_m_radix_omp::RadixOMP task(task_data);
   ASSERT_TRUE(task.Validation());
   task.PreProcessing();
   task.Run();
@@ -88,7 +88,7 @@ TEST(burykin_m_radix_seq, RandomVector) {
   EXPECT_EQ(output, expected);
 }
 
-TEST(burykin_m_radix_seq, AllEqual) {
+TEST(burykin_m_radix_omp, AllEqual) {
   constexpr size_t kSize = 100;
   std::vector<int> input(kSize, 42);
   std::vector<int> expected = input;
@@ -100,7 +100,7 @@ TEST(burykin_m_radix_seq, AllEqual) {
   task_data->outputs.push_back(reinterpret_cast<uint8_t*>(output.data()));
   task_data->outputs_count.push_back(static_cast<std::uint32_t>(output.size()));
 
-  burykin_m_radix_seq::RadixOMP task(task_data);
+  burykin_m_radix_omp::RadixOMP task(task_data);
   ASSERT_TRUE(task.Validation());
   task.PreProcessing();
   task.Run();
@@ -109,7 +109,7 @@ TEST(burykin_m_radix_seq, AllEqual) {
   EXPECT_EQ(output, expected);
 }
 
-TEST(burykin_m_radix_seq, EmptyVector) {
+TEST(burykin_m_radix_omp, EmptyVector) {
   std::vector<int> input;
   std::vector<int> expected;
   std::vector<int> output;
@@ -120,7 +120,7 @@ TEST(burykin_m_radix_seq, EmptyVector) {
   task_data->outputs.push_back(reinterpret_cast<uint8_t*>(output.data()));
   task_data->outputs_count.push_back(static_cast<std::uint32_t>(output.size()));
 
-  burykin_m_radix_seq::RadixOMP task(task_data);
+  burykin_m_radix_omp::RadixOMP task(task_data);
   ASSERT_TRUE(task.Validation());
   task.PreProcessing();
   task.Run();

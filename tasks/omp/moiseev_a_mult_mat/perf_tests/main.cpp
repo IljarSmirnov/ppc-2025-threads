@@ -17,7 +17,7 @@ std::vector<double> GenerateRandomMatrix(size_t rows, size_t cols) {
   std::vector<double> matrix(rows * cols);
   std::random_device rd;
   std::mt19937 gen(rd());
-  std::uniform_real_distribution<double> dist(-10.0, 10.0);
+  std::uniform_real_distribution<double> dist(-100.0, 100.0);
 
   for (auto &val : matrix) {
     val = dist(gen);

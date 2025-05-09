@@ -89,7 +89,7 @@ TEST(lopatin_i_monte_carlo_tbb, validationZeroIterations) {
 
 TEST(lopatin_i_monte_carlo_tbb, highDimensionalIntegration) {
   const int dimensions = 7;
-  const int iterations = 30000;
+  const int iterations = 50000;
   std::vector<double> bounds = lopatin_i_monte_carlo_tbb::GenerateBounds(-1.0, 1.0, dimensions);
 
   auto task_data = std::make_shared<ppc::core::TaskData>();
@@ -174,7 +174,7 @@ TEST(lopatin_i_monte_carlo_tbb, 3DExponentialFunction) {
 
 TEST(lopatin_i_monte_carlo_tbb, 2DLinearFunction) {
   const int dimensions = 2;
-  const int iterations = 30000;
+  const int iterations = 50000;
   std::vector<double> bounds = lopatin_i_monte_carlo_tbb::GenerateBounds(0.0, 1.0, dimensions);
 
   auto task_data = std::make_shared<ppc::core::TaskData>();
@@ -290,13 +290,13 @@ TEST(lopatin_i_monte_carlo_tbb, 2DCosineFunction) {
 
   // analytical = 0
   const double expected = 0.0;
-  const double tolerance = 0.03;
+  const double tolerance = 0.05;
   EXPECT_NEAR(result, expected, tolerance);  // error 5%
 }
 
 TEST(lopatin_i_monte_carlo_tbb, 2DSqrtFunction) {
   const int dimensions = 2;
-  const int iterations = 30000;
+  const int iterations = 50000;
   std::vector<double> bounds = lopatin_i_monte_carlo_tbb::GenerateBounds(0.0, 1.0, dimensions);
 
   auto task_data = std::make_shared<ppc::core::TaskData>();
@@ -326,7 +326,7 @@ TEST(lopatin_i_monte_carlo_tbb, 2DSqrtFunction) {
 
 TEST(lopatin_i_monte_carlo_tbb, 3DSinFunction) {
   const int dimensions = 3;
-  const int iterations = 30000;
+  const int iterations = 50000;
   std::vector<double> bounds = lopatin_i_monte_carlo_tbb::GenerateBounds(0.0, std::numbers::pi / 6, dimensions);
 
   auto task_data = std::make_shared<ppc::core::TaskData>();

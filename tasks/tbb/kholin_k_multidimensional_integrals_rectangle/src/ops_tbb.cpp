@@ -1,68 +1,58 @@
 #include "tbb/kholin_k_multidimensional_integrals_rectangle/include/ops_tbb.hpp"
 
+#include <oneapi/tbb/parallel_reduce.h>
+#include <tbb/blocked_range.h>
+#include <tbb/partitioner.h>
 #include <tbb/tbb.h>
 
-#include <atomic>
 #include <cmath>
-#include <core/util/include/util.hpp>
 #include <cstddef>
 #include <functional>
 #include <vector>
 
-#include "oneapi//tbb/parallel_for.h"
-#include "oneapi/tbb/task_arena.h"
-
 double kholin_k_multidimensional_integrals_rectangle_tbb::TestTaskTBB::Integrate(
     const Function& f, const std::vector<double>& l_limits, const std::vector<double>& u_limits,
-    const std::vector<double>& h, std::vector<double> f_values, int curr_index_dim, size_t dim, double n) {
+    const std::vector<double>& h, std::vector<double>& f_values, int curr_index_dim, size_t dim, double n) {
   if (curr_index_dim == static_cast<int>(dim)) {
     return f(f_values);
   }
 
-  const int num_threads = ppc::util::GetPPCNumThreads();
-  tbb::task_arena arena(num_threads);
+  const double step = h[curr_index_dim];
+  const double start_pos = l_limits[curr_index_dim] + (0.5 * step);
 
-  std::atomic<double> sum{0.0};
-
-  arena.execute([&]() {
-    tbb::parallel_for(tbb::blocked_range<int>(0, static_cast<int>(n)), [&](const tbb::blocked_range<int>& r) {
-      double local_sum = 0.0;
-      std::vector<double> local_f_values = f_values;
-      for (int i = r.begin(); i < r.end(); ++i) {
-        local_f_values[curr_index_dim] = l_limits[curr_index_dim] + (static_cast<double>(i) + 0.5) * h[curr_index_dim];
-        local_sum += Integrate(f, l_limits, u_limits, h, local_f_values, curr_index_dim + 1, dim, n);
-      }
-      double curr = sum.load();
-      while (!sum.compare_exchange_weak(curr, curr + local_sum)) {
-      }
-    });
-    tbb::auto_partitioner();
-  });
-
-  return sum * h[curr_index_dim];
+  return tbb::parallel_reduce(
+             tbb::blocked_range<int>(0, static_cast<int>(n), 1000), 0.0,
+             [&](const tbb::blocked_range<int>& r, double local_sum) {
+               std::vector<double> local_f_values = f_values;
+               for (int i = r.begin(); i < r.end(); ++i) {
+                 local_f_values[curr_index_dim] = start_pos + static_cast<double>(i) * step;
+                 local_sum += Integrate(f, l_limits, u_limits, h, local_f_values, curr_index_dim + 1, dim, n);
+               }
+               return local_sum;
+             },
+             std::plus<>(), tbb::auto_partitioner()) *
+         step;
 }
 
 double kholin_k_multidimensional_integrals_rectangle_tbb::TestTaskTBB::IntegrateWithRectangleMethod(
     const Function& f, std::vector<double>& f_values, const std::vector<double>& l_limits,
-    const std::vector<double>& u_limits, size_t dim, double n, std::vector<double> h) {
+    const std::vector<double>& u_limits, size_t dim, double n, std::vector<double>& h) {
   for (size_t i = 0; i < dim; ++i) {
     h[i] = (u_limits[i] - l_limits[i]) / n;
   }
-
-  return Integrate(f, l_limits, u_limits, h, f_values, 0, dim, n);
+  return kholin_k_multidimensional_integrals_rectangle_tbb::TestTaskTBB::Integrate(f, l_limits, u_limits, h, f_values,
+                                                                                   0, dim, n);
 }
 
 double kholin_k_multidimensional_integrals_rectangle_tbb::TestTaskTBB::RunMultistepSchemeMethodRectangle(
     const Function& f, std::vector<double> f_values, const std::vector<double>& l_limits,
     const std::vector<double>& u_limits, size_t dim, double n) {
   std::vector<double> h(dim);
-  double i_n = 0.0;
-  i_n = IntegrateWithRectangleMethod(f, f_values, l_limits, u_limits, dim, n, h);
-  return i_n;
+  return kholin_k_multidimensional_integrals_rectangle_tbb::TestTaskTBB::IntegrateWithRectangleMethod(
+      f, f_values, l_limits, u_limits, dim, n, h);
 }
 
 bool kholin_k_multidimensional_integrals_rectangle_tbb::TestTaskTBB::PreProcessingImpl() {
-  // Init value for input and output
   sz_values_ = task_data->inputs_count[0];
   sz_lower_limits_ = task_data->inputs_count[1];
   sz_upper_limits_ = task_data->inputs_count[2];
@@ -90,12 +80,12 @@ bool kholin_k_multidimensional_integrals_rectangle_tbb::TestTaskTBB::PreProcessi
 }
 
 bool kholin_k_multidimensional_integrals_rectangle_tbb::TestTaskTBB::ValidationImpl() {
-  // Check equality of counts elements
   return task_data->inputs_count[1] > 0U && task_data->inputs_count[2] > 0U;
 }
 
 bool kholin_k_multidimensional_integrals_rectangle_tbb::TestTaskTBB::RunImpl() {
-  result_ = RunMultistepSchemeMethodRectangle(f_, f_values_, lower_limits_, upper_limits_, dim_, start_n_);
+  result_ = kholin_k_multidimensional_integrals_rectangle_tbb::TestTaskTBB::RunMultistepSchemeMethodRectangle(
+      f_, f_values_, lower_limits_, upper_limits_, dim_, start_n_);
   return true;
 }
 

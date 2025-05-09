@@ -6,7 +6,7 @@
 
 #include "core/task/include/task.hpp"
 
-namespace burykin_m_radix_seq {
+namespace burykin_m_radix_omp {
 
 class RadixOMP : public ppc::core::Task {
  public:
@@ -24,4 +24,4 @@ class RadixOMP : public ppc::core::Task {
   std::vector<int> input_, output_;
 };
 
-}  // namespace burykin_m_radix_seq
+}  // namespace burykin_m_radix_omp

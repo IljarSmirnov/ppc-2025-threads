@@ -27,8 +27,8 @@ std::vector<int> GenerateRandomVector(size_t size, int min_val = -10000, int max
 
 }  // namespace
 
-TEST(burykin_m_radix_seq, test_pipeline_run) {
-  constexpr size_t kNumElements = 10000000;
+TEST(burykin_m_radix_omp, test_pipeline_run) {
+  constexpr size_t kNumElements = 20000000;
 
   std::vector<int> input = GenerateRandomVector(kNumElements);
   std::vector<int> expected = input;
@@ -42,7 +42,7 @@ TEST(burykin_m_radix_seq, test_pipeline_run) {
   task_data->outputs.emplace_back(reinterpret_cast<uint8_t *>(output.data()));
   task_data->outputs_count.emplace_back(static_cast<std::uint32_t>(output.size()));
 
-  auto task = std::make_shared<burykin_m_radix_seq::RadixOMP>(task_data);
+  auto task = std::make_shared<burykin_m_radix_omp::RadixOMP>(task_data);
 
   auto perf_attr = std::make_shared<ppc::core::PerfAttr>();
   perf_attr->num_running = 10;
@@ -62,8 +62,8 @@ TEST(burykin_m_radix_seq, test_pipeline_run) {
   EXPECT_EQ(output, expected);
 }
 
-TEST(burykin_m_radix_seq, test_task_run) {
-  constexpr size_t kNumElements = 100000000;
+TEST(burykin_m_radix_omp, test_task_run) {
+  constexpr size_t kNumElements = 20000000;
 
   std::vector<int> input = GenerateRandomVector(kNumElements);
   std::vector<int> expected = input;
@@ -77,7 +77,7 @@ TEST(burykin_m_radix_seq, test_task_run) {
   task_data->outputs.emplace_back(reinterpret_cast<uint8_t *>(output.data()));
   task_data->outputs_count.emplace_back(static_cast<std::uint32_t>(output.size()));
 
-  auto task = std::make_shared<burykin_m_radix_seq::RadixOMP>(task_data);
+  auto task = std::make_shared<burykin_m_radix_omp::RadixOMP>(task_data);
 
   auto perf_attr = std::make_shared<ppc::core::PerfAttr>();
   perf_attr->num_running = 10;

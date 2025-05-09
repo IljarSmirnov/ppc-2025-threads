@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <unordered_set>
 #include <vector>
 
 int shulpin_i_jarvis_seq::JarvisSequential::Orientation(const Point& p, const Point& q, const Point& r) {
@@ -17,7 +18,11 @@ void shulpin_i_jarvis_seq::JarvisSequential::MakeJarvisPassage(std::vector<shulp
                                                                std::vector<shulpin_i_jarvis_seq::Point>& output_jar) {
   size_t total = input_jar.size();
   output_jar.clear();
-
+  // clang-format off
+  std::unordered_set<shulpin_i_jarvis_seq::Point, 
+                     shulpin_i_jarvis_seq::PointHash, 
+                     shulpin_i_jarvis_seq::PointEqual> unique_points;
+  // clang-format on
   size_t start = 0;
   for (size_t i = 1; i < total; ++i) {
     if (input_jar[i].x < input_jar[start].x ||
@@ -28,10 +33,18 @@ void shulpin_i_jarvis_seq::JarvisSequential::MakeJarvisPassage(std::vector<shulp
 
   size_t active = start;
   do {
-    output_jar.emplace_back(input_jar[active]);
-    size_t candidate = (active + 1) % total;
+    const auto& current = input_jar[active];
+    if (unique_points.find(current) == unique_points.end()) {
+      output_jar.emplace_back(current);
+      unique_points.insert(current);
+    }
 
+    size_t candidate = (active + 1) % total;
     for (size_t index = 0; index < total; ++index) {
+      if (index == active) {
+        continue;
+      }
+
       if (Orientation(input_jar[active], input_jar[index], input_jar[candidate]) == 2) {
         candidate = index;
       }

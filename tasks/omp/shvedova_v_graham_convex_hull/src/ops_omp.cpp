@@ -3,9 +3,11 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <iterator>
 #include <span>
-#include <utility>
 #include <vector>
+
+#include "core/util/include/util.hpp"
 
 namespace {
 bool CheckCollinearity(std::span<double> raw_points) {
@@ -15,7 +17,6 @@ bool CheckCollinearity(std::span<double> raw_points) {
   }
   const auto dx = raw_points[2] - raw_points[0];
   const auto dy = raw_points[3] - raw_points[1];
-
   for (size_t i = 2; i < points_count; i++) {
     const auto dx_i = raw_points[(i * 2)] - raw_points[0];
     const auto dy_i = raw_points[(i * 2) + 1] - raw_points[1];
@@ -25,10 +26,6 @@ bool CheckCollinearity(std::span<double> raw_points) {
   }
   return true;
 }
-double CrossProduct(const Point &p0, const Point &p1, const Point &p2) {
-  return ((p1[0] - p0[0]) * (p2[1] - p0[1])) - ((p1[1] - p0[1]) * (p2[0] - p0[0]));
-}
-
 bool ComparePoints(const Point &p0, const Point &p1, const Point &p2) {
   const auto dx1 = p1[0] - p0[0];
   const auto dy1 = p1[1] - p0[1];
@@ -39,6 +36,9 @@ bool ComparePoints(const Point &p0, const Point &p1, const Point &p2) {
     return (dx1 * dx1 + dy1 * dy1) < (dx2 * dx2 + dy2 * dy2);
   }
   return cross > 0;
+}
+double CrossProduct(const Point &p0, const Point &p1, const Point &p2) {
+  return ((p1[0] - p0[0]) * (p2[1] - p0[1])) - ((p1[1] - p0[1]) * (p2[0] - p0[0]));
 }
 }  // namespace
 
@@ -70,12 +70,40 @@ bool GrahamConvexHullOMP::PreProcessingImpl() {
 
 void GrahamConvexHullOMP::PerformSort() {
   const auto pivot = *std::ranges::min_element(input_, [](auto &a, auto &b) { return a[1] < b[1]; });
-#pragma omp parallel
-  {
-#pragma omp single
-    {
-      std::ranges::sort(input_.begin(), input_.end(),
-                        [&](const Point &p1, const Point &p2) { return ComparePoints(pivot, p1, p2); });
+
+  const int threadsnum = std::min(points_count_, ppc::util::GetPPCNumThreads());
+  const int perthread = points_count_ / threadsnum;
+  const int unfit = points_count_ % threadsnum;
+
+  std::vector<std::span<Point>> fragments(threadsnum);
+  auto it = input_.begin();
+  for (int i = 0; i < threadsnum; i++) {
+    auto nit = std::next(it, perthread + ((i < unfit) ? 1 : 0));
+    fragments[i] = std::span{it, nit};
+    it = nit;
+  }
+
+  const auto comp = [&](const Point &p1, const Point &p2) { return ComparePoints(pivot, p1, p2); };
+  const auto merge = [&](std::span<Point> &primary, std::span<Point> &follower) {
+    std::inplace_merge(primary.begin(), follower.begin(), follower.end(), comp);
+    primary = std::span{primary.begin(), follower.end()};
+  };
+
+#pragma omp parallel for
+  for (int i = 0; i < threadsnum; i++) {
+    std::ranges::sort(fragments[i], comp);
+  }
+
+  for (std::size_t i = 1, iter = threadsnum; iter > 1; i *= 2, iter /= 2) {
+    const auto factor = iter / 2;
+#pragma omp parallel for if (fragments.front().size() > 24)
+    for (int k = 0; k < static_cast<int>(factor); ++k) {
+      merge(fragments[2 * i * k], fragments[(2 * i * k) + i]);
+    }
+    if ((iter / 2) == 1) {
+      merge(fragments.front(), fragments.back());
+    } else if ((iter / 2) % 2 != 0) {
+      merge(fragments[2 * i * (factor - 2)], fragments[2 * i * (factor - 1)]);
     }
   }
 }

@@ -10,7 +10,7 @@
 #include "seq/durynichev_d_integrals_simpson_method/include/ops_seq.hpp"
 
 TEST(durynichev_d_integrals_simpson_method_seq, test_pipeline_run) {
-  std::vector<double> in = {-10.0, 10.0, -10.0, 10.0, 30000};  // [x0, x1, y0, y1, n]
+  std::vector<double> in = {-10.0, 10.0, -10.0, 10.0, 30000};
   std::vector<double> out(1, 0.0);
 
   auto task_data = std::make_shared<ppc::core::TaskData>();
@@ -39,7 +39,7 @@ TEST(durynichev_d_integrals_simpson_method_seq, test_pipeline_run) {
 }
 
 TEST(durynichev_d_integrals_simpson_method_seq, test_task_run) {
-  std::vector<double> in = {0.0, 5.0, 0.0, 5.0, 40000};  // [x0, x1, y0, y1, n]
+  std::vector<double> in = {-10.0, 10.0, -10.0, 10.0, 30000};
   std::vector<double> out(1, 0.0);
 
   auto task_data = std::make_shared<ppc::core::TaskData>();
@@ -64,5 +64,5 @@ TEST(durynichev_d_integrals_simpson_method_seq, test_task_run) {
   perf_analyzer->TaskRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
 
-  EXPECT_NEAR(out[0], 1250.0 / 3.0, 1e-2);
+  EXPECT_NEAR(out[0], 80000.0 / 3.0, 1e-2);
 }

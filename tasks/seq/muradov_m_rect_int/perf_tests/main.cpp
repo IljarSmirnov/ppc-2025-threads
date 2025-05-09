@@ -13,8 +13,8 @@
 #include "seq/muradov_m_rect_int/include/ops_seq.hpp"
 
 TEST(muradov_m_rect_int_seq, test_pipeline_run) {
-  std::size_t iterations = 480;
-  std::vector<std::pair<double, double>> bounds(3, {-1.0, 1.0});
+  std::size_t iterations = 475;
+  std::vector<std::pair<double, double>> bounds(3, {-3.0, 3.0});
   double out = 0.0;
 
   auto task_data_seq = std::make_shared<ppc::core::TaskData>();
@@ -42,11 +42,13 @@ TEST(muradov_m_rect_int_seq, test_pipeline_run) {
   auto perf_analyzer = std::make_shared<ppc::core::Perf>(test_task_sequential);
   perf_analyzer->PipelineRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
+
+  EXPECT_NEAR(out, 648, 0.3);
 }
 
 TEST(muradov_m_rect_int_seq, test_task_run) {
-  std::size_t iterations = 480;
-  std::vector<std::pair<double, double>> bounds(3, {-1.0, 1.0});
+  std::size_t iterations = 475;
+  std::vector<std::pair<double, double>> bounds(3, {-3.0, 3.0});
   double out = 0.0;
 
   auto task_data_seq = std::make_shared<ppc::core::TaskData>();
@@ -74,4 +76,6 @@ TEST(muradov_m_rect_int_seq, test_task_run) {
   auto perf_analyzer = std::make_shared<ppc::core::Perf>(test_task_sequential);
   perf_analyzer->TaskRun(perf_attr, perf_results);
   ppc::core::Perf::PrintPerfStatistic(perf_results);
+
+  EXPECT_NEAR(out, 648, 0.3);
 }
