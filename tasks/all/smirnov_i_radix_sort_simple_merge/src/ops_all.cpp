@@ -11,6 +11,8 @@
 #include <utility>
 #include <vector>
 
+#include "core/util/include/util.hpp"
+
 std::vector<int> smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merge(std::vector<int> &mas1,
                                                                            std::vector<int> &mas2) {
   std::vector<int> res;
@@ -139,7 +141,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   MPI_Scatterv(mas_.data(), sendcounts.data(), displs.data(), MPI_INT, local_mas.data(), sendcounts[rank], MPI_INT, 0,
                MPI_COMM_WORLD);
 
-  int max_th = std::thread::hardware_concurrency();
+  int max_th = ppc::util::GetPPCNumThreads();
   std::mutex mtxfirstdq;
   std::mutex mtx;
   bool flag;
