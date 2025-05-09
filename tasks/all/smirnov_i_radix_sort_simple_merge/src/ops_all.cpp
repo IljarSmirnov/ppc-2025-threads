@@ -145,7 +145,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   bool flag;
   std::vector<std::future<std::vector<int>>> ths(max_th);
   for (int i = 0; i < max_th; i++) {
-    ths[i] = std::async(std::launch::async, &smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Sorting, this, i,
+    ths[i] = std::async(std::launch::async, &smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Sorting, i,
                         std::ref(local_mas), max_th);
   }
   std::deque<std::vector<int>> firstdq, seconddq;
@@ -160,7 +160,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   std::vector<std::thread> threads(max_th);
   while (flag) {
     for (int i = 0; i < max_th; i++) {
-      threads[i] = std::thread(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, this, std::ref(firstdq),
+      threads[i] = std::thread(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, std::ref(firstdq),
                                std::ref(seconddq), std::ref(mtx));
     }
     for (auto &th : threads) {
@@ -208,7 +208,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
     std::deque<std::vector<int>> globdq_B;
     while (flag) {
       for (int i = 0; i < max_th; i++) {
-        ts[i] = std::thread(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, this, std::ref(globdq_A),
+        ts[i] = std::thread(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, std::ref(globdq_A),
                             std::ref(globdq_B), std::ref(mtx));
       }
       for (auto &th : ts) {
