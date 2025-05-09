@@ -160,15 +160,15 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
     }
   }
   flag = static_cast<int>(firstdq.size()) != 1;
-  std::vector<std::thread> threads(max_th);
+  std::vector<std::thread> threads{};
   printf("here1\n");
   while (flag) {
-    // int pairs = (static_cast<int>(firstdq.size()) + 1) / 2;
-    // threads.clear();
-    // threads.reserve(pairs);
+    int pairs = (static_cast<int>(firstdq.size()) + 1) / 2;
+    threads.clear();
+    threads.reserve(pairs);
     for (int i = 0; i < max_th; i++) {
-      threads[i] = std::thread(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, std::ref(firstdq),
-                               std::ref(seconddq), std::ref(mtx));
+      threads.emplace_back(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, std::ref(firstdq),
+                           std::ref(seconddq), std::ref(mtx));
     }
     for (auto &th : threads) {
       th.join();
@@ -220,15 +220,15 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
       printf("\n");
     }
     flag = static_cast<int>(globdq_A.size()) != 1;
-    std::vector<std::thread> ts(max_th);
+    std::vector<std::thread> ts{};
     std::deque<std::vector<int>> globdq_B;
     while (flag) {
-      // int pairs = (static_cast<int>(globdq_A.size()) + 1) / 2;
-      // ts.clear();
-      // ts.reserve(pairs);
-      for (int i = 0; i < max_th; i++) {
-        ts[i] = std::thread(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, std::ref(globdq_A),
-                            std::ref(globdq_B), std::ref(mtx));
+      int pairs = (static_cast<int>(globdq_A.size()) + 1) / 2;
+      ts.clear();
+      ts.reserve(pairs);
+      for (int i = 0; i < pairs; i++) {
+        ts.emplace_back(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, std::ref(globdq_A),
+                        std::ref(globdq_B), std::ref(mtx));
       }
       for (auto &th : ts) {
         th.join();
