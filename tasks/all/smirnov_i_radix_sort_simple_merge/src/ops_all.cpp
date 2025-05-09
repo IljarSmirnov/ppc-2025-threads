@@ -160,6 +160,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   }
   flag = static_cast<int>(firstdq.size()) != 1;
   std::vector<std::thread> threads{};
+  printf("here2\n");
   while (flag) {
     int pairs = (static_cast<int>(firstdq.size()) + 1) / 2;
     threads.clear();
@@ -206,16 +207,16 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
     MPI_Send(&send_size, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
     MPI_Send(local_res.data(), send_size, MPI_INT, 0, 0, MPI_COMM_WORLD);
   }
-
+  printf("here2\n");
   if (rank == 0) {
     flag = static_cast<int>(globdq_A.size()) != 1;
-    std::vector<std::thread> ts(max_th);
+    std::vector<std::thread> ts{};
     std::deque<std::vector<int>> globdq_B;
     while (flag) {
       int pairs = (static_cast<int>(globdq_A.size()) + 1) / 2;
       ts.clear();
       ts.reserve(pairs);
-      for (int i = 0; i < max_th; i++) {
+      for (int i = 0; i < pairs; i++) {
         ts[i] = std::thread(&smirnov_i_radix_sort_simple_merge_all::TestTaskALL::Merging, std::ref(globdq_A),
                             std::ref(globdq_B), std::ref(mtx));
       }
@@ -231,6 +232,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
     }
     output_ = std::move(globdq_A.front());
   }
+  printf("here3\n");
   MPI_Barrier(MPI_COMM_WORLD);
   return true;
 }
