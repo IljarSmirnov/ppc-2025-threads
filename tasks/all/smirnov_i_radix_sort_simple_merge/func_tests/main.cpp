@@ -55,7 +55,31 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_scalar) {
     EXPECT_EQ(exp_out, out);
   }
 }
+TEST(smirnov_i_radix_sort_simple_merge_all, test_2_elem) {
+  // Create data
+  std::vector<int> in{134, 0};
+  std::vector<int> exp_out{0, 134};
+  std::vector<int> out(2);
+  boost::mpi::communicator world;
+  // Create task_data
+  auto test_data_all = std::make_shared<ppc::core::TaskData>();
+  if (world.rank() == 0) {
+    test_data_all->inputs.emplace_back(reinterpret_cast<uint8_t *>(in.data()));
+    test_data_all->inputs_count.emplace_back(in.size());
+    test_data_all->outputs.emplace_back(reinterpret_cast<uint8_t *>(out.data()));
+    test_data_all->outputs_count.emplace_back(out.size());
+  }
 
+  // Create Task
+  smirnov_i_radix_sort_simple_merge_all::TestTaskALL test_task_all(test_data_all);
+  ASSERT_EQ(test_task_all.Validation(), true);
+  test_task_all.PreProcessing();
+  test_task_all.Run();
+  test_task_all.PostProcessing();
+  if (world.rank() == 0) {
+    EXPECT_EQ(exp_out, out);
+  }
+}
 TEST(smirnov_i_radix_sort_simple_merge_all, test_17_elem) {
   // Create data
   std::vector<int> in{6, 134, 0, 6, 7, 1, 2, 4, 5, 3268, 6, 1, 8, 4, 234, 123120, 4};
