@@ -17,8 +17,9 @@
 #include "core/util/include/util.hpp"
 #include "mpi.h"
 
-void DistributeData(int rank, int size, int n, std::vector<int> &sendcounts, std::vector<int> &displs,
-                    std::vector<int> &local_data, const std::vector<int> &data) {
+void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::DistributeData(int rank, int size, int n, std::vector<int> &sendcounts,
+                                                                        std::vector<int> &displs, std::vector<int> &local_data,
+                                                                        const std::vector<int> &data) {
   for (int i = 0; i < size; i++) {
     sendcounts[i] = n / size + (i < n % size ? 1 : 0);
     displs[i] = (i == 0) ? 0 : displs[i - 1] + sendcounts[i - 1];
@@ -27,10 +28,10 @@ void DistributeData(int rank, int size, int n, std::vector<int> &sendcounts, std
   MPI_Scatterv(data.data(), sendcounts.data(), displs.data(), MPI_INT, local_data.data(), sendcounts[rank], MPI_INT, 0,
                MPI_COMM_WORLD);
 }
-void ProcessThreads(int max_th, std::deque<std::vector<int>> &firstdq, std::deque<std::vector<int>> &seconddq,
-                    std::vector<std::thread> &threads) {
+void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::ProcessThreads(int max_th, std::deque<std::vector<int>> &firstdq,
+                                                                        std::deque<std::vector<int>> &seconddq,
+                                                                        std::vector<std::thread> &threads) {
   bool flag = static_cast<int>(firstdq.size()) != 1;
-  std::vector<std::thread> threads{};
   while (flag) {
     int pairs = (static_cast<int>(firstdq.size()) + 1) / 2;
     threads.clear();
@@ -53,7 +54,8 @@ void ProcessThreads(int max_th, std::deque<std::vector<int>> &firstdq, std::dequ
     }
   }
 }
-void CollectData(int rank, int size, std::deque<std::vector<int>> &globdq_a, std::vector<int> &local_res) {
+void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::CollectData(int rank, int size, std::deque<std::vector<int>> &globdq_a,
+                                                                     std::vector<int> &local_res) {
   for (int i = 0; i < size; i++) {
     std::vector<int> local_sorted;
     if (i == 0) {
