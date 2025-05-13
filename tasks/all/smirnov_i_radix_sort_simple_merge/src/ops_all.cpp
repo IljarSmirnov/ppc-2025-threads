@@ -17,8 +17,10 @@
 #include "core/util/include/util.hpp"
 #include "mpi.h"
 
-void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::DistributeData(int rank, int size, int n, std::vector<int> &sendcounts,
-                                                                        std::vector<int> &displs, std::vector<int> &local_data,
+void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::DistributeData(int rank, int size, int n,
+                                                                        std::vector<int> &sendcounts,
+                                                                        std::vector<int> &displs,
+                                                                        std::vector<int> &local_data,
                                                                         const std::vector<int> &data) {
   for (int i = 0; i < size; i++) {
     sendcounts[i] = n / size + (i < n % size ? 1 : 0);
@@ -28,7 +30,8 @@ void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::DistributeData(int rank
   MPI_Scatterv(data.data(), sendcounts.data(), displs.data(), MPI_INT, local_data.data(), sendcounts[rank], MPI_INT, 0,
                MPI_COMM_WORLD);
 }
-void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::ProcessThreads(int max_th, std::deque<std::vector<int>> &firstdq,
+void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::ProcessThreads(int max_th,
+                                                                        std::deque<std::vector<int>> &firstdq,
                                                                         std::deque<std::vector<int>> &seconddq,
                                                                         std::vector<std::thread> &threads) {
   bool flag = static_cast<int>(firstdq.size()) != 1;
@@ -54,7 +57,8 @@ void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::ProcessThreads(int max_
     }
   }
 }
-void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::CollectData(int rank, int size, std::deque<std::vector<int>> &globdq_a,
+void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::CollectData(int rank, int size,
+                                                                     std::deque<std::vector<int>> &globdq_a,
                                                                      std::vector<int> &local_res) {
   for (int i = 0; i < size; i++) {
     std::vector<int> local_sorted;
