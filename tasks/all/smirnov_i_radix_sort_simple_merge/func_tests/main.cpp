@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <boost/mpi/communicator.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -57,8 +58,8 @@ TEST(smirnov_i_radix_sort_simple_merge_all, test_scalar) {
 }
 TEST(smirnov_i_radix_sort_simple_merge_all, test_2_elem) {
   // Create data
-  std::vector<int> in{134, 0};
-  std::vector<int> exp_out{0, 134};
+  std::vector<int> in{853, 0};
+  std::vector<int> exp_out{0, 853};
   std::vector<int> out(2);
   boost::mpi::communicator world;
   // Create task_data

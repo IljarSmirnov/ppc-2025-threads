@@ -4,9 +4,7 @@
 #include <boost/mpi/communicator.hpp>
 #include <cmath>
 #include <deque>
-#include <future>
 #include <mutex>
-#include <thread>
 #include <utility>
 #include <vector>
 
