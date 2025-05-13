@@ -190,7 +190,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   std::vector<int> sendcounts(size);
   std::vector<int> displs(size, 0);
-  int offset = 0;
+  // int offset = 0;
   int n = 0;
   if (rank == 0) {
     n = static_cast<int>(mas_.size());
@@ -205,8 +205,8 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   // std::vector<int> local_mas(sendcounts[rank]);
   // MPI_Scatterv(mas_.data(), sendcounts.data(), displs.data(), MPI_INT, local_mas.data(), sendcounts[rank], MPI_INT,
   // 0, MPI_COMM_WORLD);
-
-  DistributeData(rank, size, n, sendcounts, displs, local_data, data);
+  std::vector<int> local_mas{};
+  DistributeData(rank, size, n, sendcounts, displs, local_mas, mas_);
 
   const int max_th = ppc::util::GetPPCNumThreads();
   std::mutex mtxfirstdq;
@@ -225,6 +225,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
       firstdq.push_back(std::move(local_th_mas));
     }
   }
+  std::vector<std::thread> threads{};
   ProcessThreads(max_th, firstdq, seconddq, threads);
   // bool flag = static_cast<int>(firstdq.size()) != 1;
   // std::vector<std::thread> threads{};
@@ -284,7 +285,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
   //   MPI_Send(&send_size, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
   //   MPI_Send(local_res.data(), send_size, MPI_INT, 0, 0, MPI_COMM_WORLD);
   // }
-
+  bool flag = false;
   if (rank == 0) {
     flag = static_cast<int>(globdq_a.size()) != 1;
     std::vector<std::thread> ts{};
