@@ -33,7 +33,8 @@ void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::DistributeData(int rank
 void smirnov_i_radix_sort_simple_merge_all::TestTaskALL::ProcessThreads(int max_th,
                                                                         std::deque<std::vector<int>> &firstdq,
                                                                         std::deque<std::vector<int>> &seconddq,
-                                                                        std::vector<std::thread> &threads) {
+                                                                        std::vector<std::thread> &threads,
+                                                                        std::mutex &mtx) {
   bool flag = static_cast<int>(firstdq.size()) != 1;
   while (flag) {
     int pairs = (static_cast<int>(firstdq.size()) + 1) / 2;
@@ -226,7 +227,7 @@ bool smirnov_i_radix_sort_simple_merge_all::TestTaskALL::RunImpl() {
     }
   }
   std::vector<std::thread> threads{};
-  ProcessThreads(max_th, firstdq, seconddq, threads);
+  ProcessThreads(max_th, firstdq, seconddq, threads, std::ref(mtx));
   // bool flag = static_cast<int>(firstdq.size()) != 1;
   // std::vector<std::thread> threads{};
   // while (flag) {
