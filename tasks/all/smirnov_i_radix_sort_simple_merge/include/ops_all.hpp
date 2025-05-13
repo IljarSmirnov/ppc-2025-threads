@@ -30,7 +30,7 @@ class TestTaskALL : public ppc::core::Task {
   static void DistributeData(int rank, int size, int n, std::vector<int> &sendcounts, std::vector<int> &displs,
                              std::vector<int> &local_data, const std::vector<int> &data);
   static void ProcessThreads(int max_th, std::deque<std::vector<int>> &firstdq, std::deque<std::vector<int>> &seconddq,
-                             std::vector<std::thread> &threads,std::mutex &mtx);
+                             std::vector<std::thread> &threads, std::mutex &mtx);
   static void CollectData(int rank, int size, std::deque<std::vector<int>> &globdq_a, std::vector<int> &local_res);
   boost::mpi::communicator world_;
 };
